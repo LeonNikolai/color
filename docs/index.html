@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html class="no-js" lang=en>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Color Picker</title>
+  <link rel="stylesheet" href="main.css">
+  <link rel="stylesheet" href="resets.css">
+</head>
+
+<body>
+  <main>
+    <div id=colors></div>
+    <div id=settings>
+      <form id=colorpicker>
+        <fieldset id=hsl>
+          <legend>HSL</legend>
+          <fieldset>
+            <input type=range step=any max=360 min=0 class=hue value=180>
+            <input type=number step=1 max=360 min=0 class=hue value=180>
+          </fieldset>
+          <fieldset>
+            <input type=range step=any max=100 min=0 class=saturation value=100>
+            <input type=number max=100 min=0 class=saturation value=100>
+          </fieldset>
+          <fieldset>
+            <input type=range step=any max=100 min=0 class=lightness value=50>
+            <input type=number max=100 min=0 class=lightness value=50>
+          </fieldset>
+        </fieldset>
+        <fieldset id=hsv>
+          <legend>HSV</legend>
+          <fieldset>
+            <input type=range step=any max=360 min=0 class=hue value=180>
+            <input type=number max=360 min=0 class=hue value=180>
+          </fieldset>
+          <fieldset>
+            <input type=range step=any max=100 min=0 class=saturation value=100>
+            <input type=number max=100 min=0 class=saturation2 value=100>
+          </fieldset>
+          <fieldset>
+            <input type=range step=any max=100 min=0 class=value value=50>
+            <input type=number max=100 min=0 class=value value=50>
+          </fieldset>
+        </fieldset>
+        <fieldset id=rgb>
+          <legend>RGB</legend>
+          <fieldset>
+            <input type=range step=any max=255 min=0 class=red value=0>
+            <input type=number step=any max=255 min=0 class=red value=0>
+
+          </fieldset>
+          <fieldset>
+            <input type=range step=any max=255 min=0 class=green value=0>
+            <input type=number step=any max=255 min=0 class=green value=0>
+
+          </fieldset>
+          <fieldset>
+            <input type=range step=any max=255 min=0 class=blue value=0>
+            <input type=number step=any max=255 min=0 class=blue value=0>
+          </fieldset>
+        </fieldset>
+      </form>
+    </div>
+  </main>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="script.js"></script>
+
+</body>
+
+</html>

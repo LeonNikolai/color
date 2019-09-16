@@ -1,0 +1,106 @@
+:root {
+  --hue: 180;
+  --saturation: 100%;
+  --lightness: 50%;
+  --red: 0;
+  --green: 0;
+  --blue: 0;
+}
+main {
+  margin: auto;
+  display: grid;
+  grid-auto-columns: 2;
+}
+#colors {
+  width: 30vw;
+  height: 100%;
+  background: red;
+}
+#settings {
+  width: 60vw;
+}
+
+.hue {
+  background:
+    linear-gradient(to right,
+      hsl(0,   var(--saturation), var(--lightness)),
+      hsl(60,  var(--saturation), var(--lightness)),
+      hsl(120, var(--saturation), var(--lightness)),
+      hsl(180, var(--saturation), var(--lightness)),
+      hsl(240, var(--saturation), var(--lightness)),
+      hsl(300, var(--saturation), var(--lightness)),
+      hsl(360, var(--saturation), var(--lightness)));
+}
+
+.saturation {
+  background:
+    linear-gradient(to right,
+      hsl(var(--hue), 0%,   var(--lightness)),
+      hsl(var(--hue), 100%, var(--lightness)));
+}
+.saturation2 {
+  background:
+    linear-gradient(to right,
+      hsl(var(--hue), 0%,   var(--lightness)),
+      hsl(var(--hue), 100%, var(--lightness)));
+}
+
+.lightness {
+  background:
+    linear-gradient(to right,
+      hsl(var(--hue), var(--saturation), 0%),
+      hsl(var(--hue), var(--saturation), 50%),
+      hsl(var(--hue), var(--saturation), 100%));
+}
+
+.value {
+  background:
+    linear-gradient(to right,
+      hsl(var(--hue), var(--saturation), 0%),
+      hsl(var(--hue), var(--saturation), calc(var(--saturation)))
+      ), blue;
+}
+
+.red {
+  background:
+    linear-gradient(to right,
+      rgb(0,   var(--green), var(--blue)),
+      rgb(255, var(--green), var(--blue)));
+}
+
+.green {
+  background:
+    linear-gradient(to right,
+      rgb(var(--red), 0,   var(--blue)),
+      rgb(var(--red), 255, var(--blue)));
+}
+
+
+.blue {
+  background:
+    linear-gradient(to right,
+      rgb(var(--red), var(--green), 0),
+      rgb(var(--red), var(--green), 255));
+}
+
+#colorpicker > fieldset > fieldset {
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+#colorpicker > fieldset > fieldset > input:nth-child(2) {
+  background: none;
+  padding: 0;
+  margin: 0;
+  border: none;
+  width: 19.3%;
+  height: 2rem;
+}
+#colorpicker > fieldset > fieldset > input:nth-child(1) {
+  height: 2rem;
+  padding: 0;
+  width: 80%;
+  margin: 0;
+  border: none;
+}
