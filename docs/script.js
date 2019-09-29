@@ -10,59 +10,48 @@ $("input").bind("mousewheel", function(event, delta) {
   return false;
 });
 
+$( document ).ready(function() {
+  var hi = window.location.hash - "hue:"
+  console.log( window.location.hash);
+});
+
+
 // Store value in other inputs with same class, and a css root variable.
 // Stoggles focus class
 $(".hue").hover(function(){
   $("*").find(".hue").toggleClass('focus');
 });
 
-$(".hue").on("input", function() {
-  $(".hue").val(this.value);
-  $(".hue[type=number]").val(Math.round(this.value));
-  $("body").get(0).style.setProperty("--hue", this.value);
-  // Store value in url
-  var hi = $("body").css("--hue");
-  window.location.hash = "hue:" + hi;
-});
-
 $(".lightness").on("input", function() {
-  $(".lightness").val(this.value);
-  $(".lightness[type=number]").val(Math.round(this.value));
-  $("body").get(0).style.setProperty("--lightness", this.value + "%");
+  minfunction(".lightness", "lightness", this.value, "%");
 });
 
 $(".saturation").on("input", function() {
-  $(".saturation").val(this.value);
-  $(".saturation[type=number]").val(Math.round(this.value));
-  $("body").get(0).style.setProperty("--saturation", this.value + "%");
+  minfunction(".saturation", "saturation", this.value, "%");
 });
 
-$(".green").on("input", function() {
-  $(".green").val(this.value);
-  $(".green[type=number]").val(Math.round(this.value));
-  $("body").get(0).style.setProperty("--green", this.value);
+$(".hue").on("input", function() {
+  minfunction(".hue", "hue", this.value);
 });
-
 $(".red").on("input", function() {
-  $(".red").val(this.value);
-  $(".red[type=number]").val(Math.round(this.value));
-  $("body").get(0).style.setProperty("--red", this.value);
+  minfunction(".red", "red", this.value);
 });
-
+$(".green").on("input", function() {
+  minfunction(".green", "green", this.value);
+});
 $(".blue").on("input", function() {
-  $(".blue").val(this.value);
-  $(".blue[type=number]").val(Math.round(this.value));
-  $("body").get(0).style.setProperty("--blue", this.value);
+  minfunction(".blue", "blue", this.value);
 });
 
-
-
-
-$(fn.minfunction = function (myclass, nrextention) {
-  $("." + myclass).get(0).style.setProperty("--" + myclass + nrextention, this.value);
-  $("." + myclass + "[type=number]").val(Math.round(this.value));
-  $("." + myclass).val(this.value);
-});
-
-$(".hue").on("input", this, minfunction("hue", ""));
-$(".red").on("input", this, minfunction("red", "%"));
+var minfunction = function(selector, property, value, suffix ) {
+  _this = $(selector); 
+  if(typeof suffix === 'undefined' ){
+    suffix = ''
+  }
+  // if'en under gjør det slik at vi kun får elementet med [type=number]
+  if(_this.is("[type=number]")){
+    _this.val(Math.round(value));
+  }
+  $("body").get(0).style.setProperty("--" + property, value + suffix);
+  window.location.hash = property + value + suffix;
+}
