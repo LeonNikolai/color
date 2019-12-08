@@ -8,9 +8,9 @@ let input_green = document.getElementById('g');
 let input_blue = document.getElementById('b');
 let input_hex = document.getElementById('hex');
 function onload() {
-    rgb.r = getparam(rgb.r, "r");
-    rgb.g = getparam(rgb.g, "g");
-    rgb.b = getparam(rgb.b, "b");
+    rgb.r = getparam("r");
+    rgb.g = getparam("g");
+    rgb.b = getparam("b");
     input_red.value = rgb.r;
     input_green.value = rgb.g;
     input_blue.value = rgb.b;
@@ -52,10 +52,15 @@ function hex_rgb(hex) {
 }
 ;
 const minmaxsnap = me => me.value = Number(me.value) > Number(me.max) ? me.max : Number(me.min) > Number(me.value) ? me.min : me.value;
-function getparam(x, query) {
-    let params = new URLSearchParams(document.location.search.substring(1));
-    if (params.has(query)) {
-        return String(params.get(query));
+function getparam(x) {
+    let y = new URLSearchParams(document.location.search.substring(1)).get(x);
+    if (y == null) {
+        console.log(y);
+        return 127.5;
+    }
+    else {
+        console.log(y);
+        return y;
     }
 }
 ;
