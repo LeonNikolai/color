@@ -1,0 +1,65 @@
+doctype html
+html(lang='en')
+	head
+		meta(charset='UTF-8')
+		meta(name='viewport' content='width=device-width, initial-scale=1.0')
+		link(rel='stylesheet' href='global.css')
+	body(onload='onload()')
+		nav
+			label(for="colorspace") Mode 
+			select#colorspace(name="colorspace" title="Change color mode")
+				option(value='rgb') RGB
+				option(value='hsl') HSL
+				option(value='hsl') XYZ
+			span.wordtoggle(title="change view type")
+				input#3D(type="radio", name="viewtype" value="3d" checked onchange='console.log("3d")')
+				label(for="3D") 2D
+				input#2D(type="radio", name="viewtype" value="2d" onchange='console.log("2d")')
+				label(for="2D") 3D
+			span alpha | Probably goinging to move to use ThreeJS, because of current P5JS limitations
+		main
+			.rgb
+				label(for='r') Red
+				br
+				input.txt#r(type='range' name='r' step='any' max=255 min=0 
+				oninput=`minmaxsnap(this); rgb.r = this.value; this.nextSibling.value = Math.round(this.value);draw(); input_hex.value = rgb_hex(rgb.r,rgb.g,rgb.b);`
+				)
+				input.txt#r2(type='number' name='r' step='any' max=255 min=0 
+				oninput=`minmaxsnap(this); rgb.r = this.value; this.previousSibling.value = this.value;draw(); input_hex.value = rgb_hex(rgb.r,rgb.g,rgb.b);`
+				)
+				br
+				label(for='g') Green
+				br
+				input.txt#g(type='range' name='g' step='any' max=255 min=0
+				oninput=`minmaxsnap(this);rgb.g = this.value; this.nextSibling.value = Math.round(this.value);draw(); input_hex.value = rgb_hex(rgb.r,rgb.g,rgb.b);`
+				)
+				input.txt#g2(type='number' name='g' step='any' max=255 min=0
+				oninput=`minmaxsnap(this);rgb.g = this.value; this.previousSibling.value = this.value;draw(); input_hex.value = rgb_hex(rgb.r,rgb.g,rgb.b);`
+				)
+				br
+				label(for='b') Blue
+				br
+				input.txt#b(type='range' name='b' step='any' max=255 min=0
+				oninput=`minmaxsnap(this);rgb.b = this.value;this.nextSibling.value = Math.round(this.value); draw(); input_hex.value = rgb_hex(rgb.r,rgb.g,rgb.b);`
+				)
+				input.txt#b2(type='number' name='b' step='any' max=255 min=0
+				oninput=`minmaxsnap(this);rgb.b = this.value; this.previousSibling.value = this.value; draw(); input_hex.value = rgb_hex(rgb.r,rgb.g,rgb.b);`
+				)
+				br
+				span Hex #
+				output#hex()
+			section#viewrgb
+				.toolbar
+					span View test 
+					select#colorspace(name="viewspace" onchange='seti = this.value')
+						option(value='1') TEST 1 : RGB cordinates
+						option(value='2') TEST 2 : minimalistic experiment
+						option(value='3') TEst 3 : RGB CUBE not done because
+					button(onclick='setup()') reset fix
+			section#settings
+			section#outputs
+			
+		section
+
+		script(src='https://cdn.jsdelivr.net/npm/p5' type='text/javascript')
+		script(src='index.js' type='text/javascript')

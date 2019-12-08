@@ -1,0 +1,9 @@
+npm install -g pug-cli
+npm install -g typescript
+npm install -g sass
+
+Npm
+
+tsc
+pug -w ./src -o ./output
+sass --watch ./src:./output

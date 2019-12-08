@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+		"target": "esnext",
+		"watch": true,
+		"lib": ["dom", "es2019"],
+		"rootDir": "./src",
+		"outDir": "./output",
+	},
+	"exclude": [
+		"./output"
+	]
+}

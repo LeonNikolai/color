@@ -1,0 +1,128 @@
+html {
+  font-family: sans-serif;
+}
+
+body {
+  margin: 0;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+}
+
+*, *::after, *::before {
+  box-sizing: inherit;
+}
+
+.rgb {
+  padding: 1rem;
+  margin: auto;
+  width: fit-content;
+}
+
+main {
+  height: 100vh;
+  padding-top: 5rem;
+}
+
+#viewrgb {
+  width: 100%;
+}
+#viewrgb canvas {
+  width: 100%;
+  margin: auto;
+}
+
+#canvasview {
+  width: 100%;
+  height: 100%;
+}
+
+.toolbar {
+  background: #222;
+  color: white;
+}
+.toolbar span {
+  margin: 0 1rem;
+}
+
+nav {
+  position: fixed;
+  width: 100%;
+  background: #222;
+  line-height: 1;
+  color: white;
+  font-size: 1rem;
+  padding: 0 1rem;
+}
+
+.wordtoggle {
+  border-left: 2px #555 solid;
+  padding-left: 2px;
+}
+.wordtoggle label {
+  color: white;
+  font-weight: 900;
+  display: inline-block;
+  padding: 1rem;
+  cursor: pointer;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.wordtoggle label:hover {
+  background: black;
+}
+.wordtoggle input {
+  display: none;
+}
+.wordtoggle input:checked + label {
+  display: none;
+  font-weight: 900;
+  color: red;
+}
+
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+#colorspace {
+  color: white;
+  background: transparent;
+  padding: 1rem;
+  margin: 0;
+  font-weight: bold;
+  border: 0;
+  outline: none;
+  transition: border-radius 0.2s linear;
+}
+#colorspace:hover, #colorspace:focus {
+  background: black;
+}
+#colorspace:focus:hover {
+  outline: 0;
+}
+#colorspace option {
+  background: #222;
+  outline: none;
+  border: none;
+}
+#colorspace option:hover {
+  background: black;
+}
+canvas {
+  width: 100%;
+  height: auto;
+}
+
+select option:hover,
+select option:focus,
+select option:active,
+select option:checked {
+  background: linear-gradient(#FFC894, #FFC894);
+}
+
+/*# sourceMappingURL=global.css.map */
