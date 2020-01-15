@@ -7,59 +7,112 @@ html(lang='en')
 	body(onload='onload()')
 		nav
 			label(for="colorspace") Mode 
-			select#colorspace(name="colorspace" title="Change color mode")
-				option(value='rgb') RGB
-				option(value='hsl') HSL
-				option(value='hsl') XYZ
+			select#colorspace(name="colorspace" title="Change color mode" onchange='mode = document.getElementById("colorspace").selectedIndex')
+				option(value='rgb') LINE
+				option(value='hsl') CUBE
+				option(value='hsl') SHAPE
 			span.wordtoggle(title="change view type")
 				input#3D(type="radio", name="viewtype" value="3d" checked onchange='console.log("3d")')
 				label(for="3D") 2D
 				input#2D(type="radio", name="viewtype" value="2d" onchange='console.log("2d")')
 				label(for="2D") 3D
-			span alpha | Probably goinging to move to use ThreeJS, because of current P5JS limitations
 		main
 			.rgb
-				label(for='r') Red
-				br
-				input.txt#r(type='range' name='r' step='any' max=255 min=0 
-				oninput=`minmaxsnap(this); rgb.r = this.value; this.nextSibling.value = Math.round(this.value);draw(); input_hex.value = rgb_hex(rgb.r,rgb.g,rgb.b);`
-				)
-				input.txt#r2(type='number' name='r' step='any' max=255 min=0 
-				oninput=`minmaxsnap(this); rgb.r = this.value; this.previousSibling.value = this.value;draw(); input_hex.value = rgb_hex(rgb.r,rgb.g,rgb.b);`
-				)
-				br
-				label(for='g') Green
-				br
-				input.txt#g(type='range' name='g' step='any' max=255 min=0
-				oninput=`minmaxsnap(this);rgb.g = this.value; this.nextSibling.value = Math.round(this.value);draw(); input_hex.value = rgb_hex(rgb.r,rgb.g,rgb.b);`
-				)
-				input.txt#g2(type='number' name='g' step='any' max=255 min=0
-				oninput=`minmaxsnap(this);rgb.g = this.value; this.previousSibling.value = this.value;draw(); input_hex.value = rgb_hex(rgb.r,rgb.g,rgb.b);`
-				)
-				br
-				label(for='b') Blue
-				br
-				input.txt#b(type='range' name='b' step='any' max=255 min=0
-				oninput=`minmaxsnap(this);rgb.b = this.value;this.nextSibling.value = Math.round(this.value); draw(); input_hex.value = rgb_hex(rgb.r,rgb.g,rgb.b);`
-				)
-				input.txt#b2(type='number' name='b' step='any' max=255 min=0
-				oninput=`minmaxsnap(this);rgb.b = this.value; this.previousSibling.value = this.value; draw(); input_hex.value = rgb_hex(rgb.r,rgb.g,rgb.b);`
-				)
-				br
-				span Hex #
-				output#hex()
+				section
+					#green-blue.canvas
+					label(for='r') Red
+					br
+					input.txt#r(type='range' name='r' step='any' max=255 min=0 value=127.5
+					oninput=`minmaxsnap(this); rgb.r = Number(this.value); this.nextSibling.value = this.value;uppdate(); `
+					)
+					input.txt#r2(type='number' name='r' step='any' max=255 min=0 value=127.5
+					oninput=`minmaxsnap(this); rgb.r = Number(this.value); this.previousSibling.value = this.value;  uppdate();`
+					)
+				section
+					#blue-red.canvas
+					label(for='g') Green
+					br
+					input.txt#g(type='range' name='g' step='any' max=255 min=0 value=127.5
+					oninput=`minmaxsnap(this);rgb.g = Number(this.value); this.nextSibling.value = this.value;uppdate();`
+					)
+					input.txt#g2(type='number' name='g' step='any' max=255 min=0 value=127.5
+					oninput=`minmaxsnap(this);rgb.g = Number(this.value); this.previousSibling.value = this.value; uppdate();`
+					)
+				section
+					#red-green.canvas
+					label(for='b') Blue
+					br
+					input.txt#b(type='range' name='b' step='any' max=255 min=0 value=127.5
+					oninput=`minmaxsnap(this);rgb.b = Number(this.value);this.nextSibling.value = this.value; uppdate();`
+					)
+					input.txt.color#b2(type='number' name='b' step='any' max=255 min=0 value=127.5
+					oninput=`minmaxsnap(this);rgb.b = Number(this.value); this.previousSibling.value = this.value; uppdate();`
+					)
 			section#viewrgb
-				.toolbar
-					span View test 
-					select#colorspace(name="viewspace" onchange='seti = this.value')
-						option(value='1') TEST 1 : RGB cordinates
-						option(value='2') TEST 2 : minimalistic experiment
-						option(value='3') TEst 3 : RGB CUBE not done because
-					button(onclick='setup()') reset fix
-			section#settings
 			section#outputs
-			
+				h3 Web outputs
+				label(for='decimal')
+				span.wordtoggle(title="change view type")
+					input#dec(type="radio", name="decimal" checked onchange='s_decimal = false;uppdate();')
+					label(for="dec") .001
+					input#nodec(type="radio", name="decimal" onchange='s_decimal = true;uppdate();')
+					label(for="nodec") .0≈0 
+				section
+					.tittlefield
+						span HEX 
+						br
+						span RGB 
+						br
+						span RGB%
+						br
+						span HSL
+						br
+						span Name
+					.outputfield
+						span #
+						output#hex()
+						br
+						span  rgb( 
+						output#r_()
+						span , 
+						output#g_()
+						span , 
+						output#b_()
+						span  )
+						br
+						span  rgb( 
+						output#r_p()
+						span %, 
+						output#g_p()
+						span %, 
+						output#b_p()
+						span % )
+						br
+						span  hsl( 
+						output#h_()
+						span , 
+						output#s_()
+						span %, 
+						output#l_()
+						span % )
+						br
+						span  unknown
+				h3 Pantone match
+				section
+					.tittlefield
+						span Uncoated
+						br
+						span Coated
+					.outputfield
+						span NOT FINISHED example:
+						output#U
+						br
+						span 4124 C 
+						output#pms_c
+						br
+
 		section
 
-		script(src='https://cdn.jsdelivr.net/npm/p5' type='text/javascript')
+		script(src='p5.min.js' type='text/javascript')
+		script(src='color.js' type='text/javascript')
 		script(src='index.js' type='text/javascript')

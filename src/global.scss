@@ -12,18 +12,34 @@ body {
 	box-sizing: inherit;
 	}
 }
+:root {
+	--rgb-r:89.1679; 
+	--rgb-g:122.024; 
+	--rgb-b:0;
+}
+.color {
+	background: rgb(var(--rgb-r),var(--rgb-g),var(--rgb-b));
+}
 .rgb{
-	padding:1rem;
+	section {
+		display: inline-block;
+		padding: 0 1rem 1rem 1rem;
+	}
+	input {
+		display: block;
+		width: 100%;
+	}
 	margin: auto;
 	width: fit-content;
 }
 main {
 	height: 100vh;
-	padding-top: 5rem;
+	padding-top: 3rem;
 }
 #viewrgb {
 	width: 100%;
-	canvas {
+	display: flex;
+	#defaultCanvas0 {
 		width: 100%;
 		margin: auto;
 	}
@@ -50,9 +66,12 @@ nav {
 	padding: 0 1rem;
 }
 .wordtoggle {
-	border-left: 2px #555 solid;
-	padding-left: 2px;
+	display: inline-block;
+	line-height: 1;
 	label {
+		display: block;
+		height: 100%;
+		text-align: center;
 		&:hover{
 			background: black;
 		}
@@ -121,4 +140,42 @@ select option:active,
 select option:checked
 {
     background: linear-gradient(#FFC894,#FFC894);
+}
+
+#outputs {
+	h3 {
+		padding: 0;
+		margin: 1rem 1rem 0 0;
+		color: #959595;
+		display: inline;
+	}
+	span {
+		color: #959595;
+
+	}
+	section {
+		display: flex;
+		flex-direction: row;
+		align-content: flex-start;
+		padding: 0 0.25rem 0.5rem 0;
+	}
+	padding: 0 1rem 0.5rem 1rem;
+	background: #222;
+	color: white;
+	line-height: 2rem;
+	.outputfield {
+		border-radius: 0.25rem;
+		display: inline-block;
+		background: #333;
+		padding: 0.35rem 0.35rem;
+		flex-grow: 1;
+		font-family: monospace;
+	}
+	.tittlefield {
+		font-size: 0.9em;
+		text-align: right;
+		color: #999;
+		padding: 0.35rem 0.35rem;
+		font-weight: bold;
+	}
 }
