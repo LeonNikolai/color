@@ -5,5 +5,5 @@ npm install -g sass
 Npm
 
 tsc
-pug -w ./src -o ./output
-sass --watch ./src:./output
+pug -w ./src -o ./docs
+sass --watch ./src:./docs

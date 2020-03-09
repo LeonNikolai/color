@@ -19,14 +19,25 @@ const
 		sv : id("sv"),
 		hex : id("hex")
 	};
-const init = () => {
+window.onload = (event) =>{
+	for (let i of document.getElementsByClassName("in")) {
+		i.addEventListener("change",function() {
+			inputUppdate();
+		  });
+	}
 	rgb.r			= Number(getparam("r"))
 	rgb.g			= Number(getparam("g"))
 	rgb.b			= Number(getparam("b"))
 	uppdateRGB();
+	let favicon = document.createElement("link")
+	favicon.rel = "icon" 
+	favicon.sizes = "any" 
+	favicon.type = "image/svg+xml"
+	favicon.id = "favicon"
+	favicon.href = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 130 130'%3E%3Ccircle fill='rgb(" + rgb.r + "," + rgb.g + "," + rgb.b + ")' cx='64' cy='64' r='64'/%3E%3C/svg%3E"
+	document.getElementsByTagName('head')[0].appendChild(favicon)
 	uppdate();
 };
-
 
 function getparam (x) {
 	let y = new URLSearchParams(document.location.search.substring(1)).get(x);
@@ -41,7 +52,7 @@ const uppdateRGB = () => {
 	RGB_HSL(rgb.r,rgb.g,rgb.b);
 	RGB_HWB(rgb.r,rgb.g,rgb.b);
 	rgb2hsv(rgb.r,rgb.g,rgb.b);
-};
+	};
 const uppdateHBW = () => {
 	let h = +(hsl.h)
 	hwbToRgb(hsl.h,hsl.w,hsl.b);
@@ -77,11 +88,17 @@ const uppdate = (me) => {
 };
 
 const setURL = () => history.replaceState(null, '', document.location.pathname + "?r=" + rgb.r.toFixed(0) + "&g=" + rgb.g.toFixed(0) + "&b=" + rgb.b.toFixed(0))
-for (let i of document.getElementsByClassName("in")) {
-	i.addEventListener("change",function() {
-		setURL();
-	  });
+
+const inputUppdate = () => {
+	document.getElementById("favicon").href = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 130 130'%3E%3Ccircle fill='rgb(" + rgb.r + "," + rgb.g + "," + rgb.b + ")' cx='64' cy='64' r='64'/%3E%3C/svg%3E"
+	document.getElementById("tittle").innerHTML = "#" + RGB_HEX(rgb.r,rgb.g,rgb.b);
+	setURL();
 }
+if(window.navigator.userAgent.indexOf("Edge") > -1) {
+	const inputUppdate = () => {
+	}
+}
+
 const css_var = (x,y) => document.documentElement.style.setProperty('--'+ String(x), String(y));
 
 const RGB_HSL = (r,g,b) => {
@@ -212,17 +229,13 @@ camera(500, -500, 500, 0, 0, 0, 0, 1, 0);
 p5.prototype.orbitControl = function(sensitivityX, sensitivityY, sensitivityZ) {
 	this._assert3d('orbitControl');
 	p5._validateParameters('orbitControl', arguments);
-  
-	// If the mouse is not in bounds of the canvas, disable all behaviors:
 	const mouseInCanvas =
 	  this.mouseX < this.width &&
 	  this.mouseX > 0 &&
 	  this.mouseY < this.height &&
 	  this.mouseY > 0;
 	if (!mouseInCanvas) return;
-  
 	const cam = this._renderer._curCamera;
-  
 	if (typeof sensitivityX === 'undefined') {
 	  sensitivityX = 1;
 	}
@@ -232,28 +245,15 @@ p5.prototype.orbitControl = function(sensitivityX, sensitivityY, sensitivityZ) {
 	if (typeof sensitivityZ === 'undefined') {
 	  sensitivityZ = 0.5;
 	}
-  
-	// default right-mouse and mouse-wheel behaviors (context menu and scrolling,
-	// respectively) are disabled here to allow use of those events for panning and
-	// zooming
-  
-	// disable context menu for canvas element and add 'contextMenuDisabled'
-	// flag to p5 instance
 	if (this.contextMenuDisabled !== true) {
 	  this.canvas.oncontextmenu = () => false;
 	  this._setProperty('contextMenuDisabled', true);
 	}
-  
-	// disable default scrolling behavior on the canvas element and add
-	// 'wheelDefaultDisabled' flag to p5 instance
 	if (this.wheelDefaultDisabled !== true) {
 	  this.canvas.onwheel = () => false;
 	  this._setProperty('wheelDefaultDisabled', true);
 	}
-  
 	const scaleFactor = this.height < this.width ? this.height : this.width;
-  
-  
 	if (this.mouseIsPressed) {
 	  if (this.mouseButton === this.LEFT) {
 		const deltaTheta =
