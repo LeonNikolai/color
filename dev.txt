@@ -7,3 +7,5 @@ Npm
 tsc
 pug -w ./src -o ./docs
 sass --watch ./src:./docs
+pug -w ./src2 -o ./test
+sass --watch ./src2:./test
