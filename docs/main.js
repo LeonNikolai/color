@@ -140,9 +140,10 @@ window.onload = (event) =>{
 	if(window.sessionStorage.rgb) {
 		clr.rgb = eval("["+window.sessionStorage.rgb+"]")
 		clr.rgb = [Number(getparam("r")), Number(getparam("g")), Number(getparam("b"))]
-		rgb2all(clr.red, 		clr.green,			clr.blue)
+
 	} else {
-		rgb2all(Math.round(Math.random() *255), Math.round(Math.random() * 255), Math.round(Math.random() * 255))
+		clr.rgb = [Number(getparam("r")), Number(getparam("g")), Number(getparam("b"))]
+		rgb2all(clr.red, 		clr.green,			clr.blue)
 	}
 
 	document.getElementById("color-1").style.background = "rgb(" + swatch[1][0] + "," + swatch[1][1] +"," + swatch[1][2] + ")"
