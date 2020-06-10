@@ -61,6 +61,7 @@ const colorload = index => {
 	old = index
 	clr.rgb = swatch[index]
 	rgb2all(swatch[index][0],swatch[index][1],swatch[index][2])
+	inputUppdate();
 }
 const RD = max =>  Math.floor(Math.random()*max)
 const sitealert = message => {
@@ -113,7 +114,7 @@ let dom = {
 const uppdate = ()=> {
 	
 }
-const setURL = () => history.replaceState({}, '', document.location.pathname + "?r=" + clr.red.toFixed(0) + "&g=" + clr.green.toFixed(0) + "&b=" + clr.blue.toFixed(0))
+const setURL = () => history.replaceState({}, '', document.location.pathname + "?r=" + clr.red + "&g=" + clr.green + "&b=" + clr.blue)
 const changeinput = (classname,type) => {
 	x = document.getElementsByClassName(classname)
 	for (i = 0; i < x.length; i++) x[i].type = type
@@ -122,6 +123,15 @@ function geee(){}
 window.onbeforeunload = function(){
 	window.sessionStorage.setItem('rgb', clr.rgb);
  }
+ 
+function getparam (x) {
+	let y = new URLSearchParams(document.location.search.substring(1)).get(x);
+	if(y == null){
+		return Math.random() * (255 - 0) + 0;
+	} else {
+		return Number(y);
+	}
+};
 window.onload = (event) =>{
 	if (/Edge/.test(navigator.userAgent)) {
 		alert('this website works better when using google chrome')
@@ -129,15 +139,18 @@ window.onload = (event) =>{
 	}
 	if(window.sessionStorage.rgb) {
 		clr.rgb = eval("["+window.sessionStorage.rgb+"]")
+		clr.rgb = [Number(getparam("r")), Number(getparam("g")), Number(getparam("b"))]
 		rgb2all(clr.red, 		clr.green,			clr.blue)
 	} else {
 		rgb2all(Math.round(Math.random() *255), Math.round(Math.random() * 255), Math.round(Math.random() * 255))
 	}
+
 	document.getElementById("color-1").style.background = "rgb(" + swatch[1][0] + "," + swatch[1][1] +"," + swatch[1][2] + ")"
 	document.getElementById("color-2").style.background = "rgb(" + swatch[2][0] + "," + swatch[2][1] +"," + swatch[2][2] + ")"
 	document.getElementById("color-3").style.background = "rgb(" + swatch[3][0] + "," + swatch[3][1] +"," + swatch[3][2] + ")"
 	document.getElementById("color-4").style.background = "rgb(" + swatch[4][0] + "," + swatch[4][1] +"," + swatch[4][2] + ")"
 	document.getElementById("color-5").style.background = "rgb(" + swatch[5][0] + "," + swatch[5][1] +"," + swatch[5][2] + ")"
+
 
 	document.getElementsByClassName("")
 	dom.red.addEventListener("input", 	(e) => {
@@ -198,6 +211,27 @@ window.onload = (event) =>{
 		clr.blackness = e.target.value
 		hwb2all( clr.hue,		clr.whiteness,		e.target.value)
 	});
+
+	for (let i of document.getElementsByClassName("clr-in")) {
+		i.addEventListener("change",function() {
+			inputUppdate();
+		  });
+	}
+	let favicon = document.createElement("link")
+	favicon.rel = "icon" 
+	favicon.sizes = "any" 
+	favicon.type = "image/svg+xml"
+	favicon.id = "favicon"
+	favicon.href = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 130 130'%3E%3Ccircle fill='rgb(" + clr.red + "," + clr.green + "," + clr.blue + ")' cx='64' cy='64' r='64'/%3E%3C/svg%3E"
+	document.getElementsByTagName('head')[0].appendChild(favicon)
+	document.getElementById("tittle").innerHTML = "#" + rgb2hex(clr.red,clr.green,clr.blue);
+	
+}
+
+const inputUppdate = () => {
+	document.getElementById("favicon").href = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 130 130'%3E%3Ccircle fill='rgb(" + clr.red + "," + clr.green + "," + clr.blue + ")' cx='64' cy='64' r='64'/%3E%3C/svg%3E"
+	document.getElementById("tittle").innerHTML = "#" + rgb2hex(clr.red,clr.green,clr.blue);
+	setURL();
 }
 const css_var = (x,y) => document.documentElement.style.setProperty('--'+ String(x), String(y));
 
@@ -580,7 +614,7 @@ function rgb2xyz(r, g, b) {
 }
 
 
-const rgb2hex = (r,g,b) => ((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1).toUpperCase();
+const rgb2hex = (r,g,b) => ((1<<24)+(r<<16)+(g<<8)+Math.round(b)).toString(16).slice(1).toUpperCase();
 
 //input value 0-16777215
 //output values [red,green,blue] in the range 0-255
