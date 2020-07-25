@@ -71,57 +71,19 @@ html(lang='en')
 						input(type="range", value=0 max=100 min=0 name="")#yellow.clr-in
 					.row
 						input(type="range", value=0 max=100 min=0 name="")#key.clr-in
-				section.colorspace
-					span.descriptor  gamma
-					.row
-						input#gamma(type="number", name="" value="2.2" oninput='sitealert("This feature is currently not implemented")')
-						select#gammapre(name="")
-							option(value="1.0") 1
-							option(value="1.8") 1.8
-							option(value="2.2") 2.2
-							option(value="sRGB") sRGB
-					span.descriptor rgb model
-						.row
-						select#gammapre(name="" oninput='sitealert("This feature is currently not implemented")')
-							option(value="1.8") sRGB
-							option(value="1.0") Adobe RGB
-							option(value="2.2") ProPhoto
-							option(value="sRGB")
+				canvas#canvas(width='100' height='100')
 			#middel
 				nav
-					.test
-						select#option(name="" oninput='sitealert("This feature is currently not implemented")')
-							option(value="test") 3d viewer
-							option(value="test" disabled) Contrast Checker
-							option(value="test" disabled) Color Scheme
-							option(value="test" disabled) Gradient Creator
-							option(value="test" disabled) Paint Mixer
-					button(onclick='sitealert("This feature is currently not implemented")') settings
+					form#clr-search
+						input#searchfield(type="text" aria-label="Search" placeholder="Color Search" name="color-search")
 				div
-					#notifications
-					.content
-						.gui
-							label.radio
-								input(type="radio", name="mode" value="1" oninput="mode = this.value" checked)
-								img.icon(src="box.svg", alt="", srcset="")
-							label.radio
-								input(type="radio", name="mode" value="0" oninput="mode = this.value" )
-								img.icon(src="line.svg", alt="", srcset="")
-							label.radio
-								input(type="radio", name="mode" value="2" oninput="mode = this.value" )
-								div.icon test
-						#viewrgb
-			#sidebar-right
-				nav
-				section
-					span preformated code
-					select(name="" oninput='sitealert("This feature is currently not implemented")')
-						option(value="1") css
-						option(value="1") js
-						option(value="1") lua
-					code.preformatedcode hey
-				section
-					button(onclick='setURL(); window.prompt("Copy to clipboard: Ctrl+C, Enter", window.location.href);') generate url
+					ul#output
+						li
+							span worker failed
+					
 			
-		script(src='p5.min.js' type='text/javascript')
-		script(src='main.js' type='text/javascript')
+		script(src='js/p5.min.js' type='text/javascript')
+		script(src='js/color_convert.js' type='text/javascript')
+		//- script(src='js/test.js' type='text/javascript')
+		//- script(src='js/worker.js' type='text/javascript')
+		script(src='js/main.js' type='text/javascript')

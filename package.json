@@ -1,0 +1,10 @@
+{
+	"name" : "RGB.code",
+	"description" : "Color picker website",
+	"homepage" : "http://documentcloud.github.com/underscore/",
+	"keywords" : ["website", "functional", "server", "client", "browser"],
+	"author" : "Leon Nikolai Engelsvold <LeonNikolai.Engelsvold@gmail.com",
+	"dependencies" : [],
+	"repository" : {"type": "git", "url": "git://github.com/documentcloud/underscore.git"},
+	"main" : "underscore.js",
+  }
