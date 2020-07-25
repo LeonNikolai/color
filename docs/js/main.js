@@ -335,7 +335,7 @@ document.getElementById("clr-search").addEventListener("submit", e => {
 myWorker.onmessage = e => {
 	out.innerHTML = ""
 	const inn = sh.value.charAt(0).toUpperCase() +  sh.value.slice(1);
-	if(clr.rgb.map(e => e >>0) != e.data[0][1] && e.data[0][1]) {
+	if(clr.rgb.map(e => e >>0) != e.data[0][1] && e.data[0][1] && stat == 1) {
 		clr.rgb = e.data[0][1];
 		domuppdate();
 	}
