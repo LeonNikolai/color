@@ -593,14 +593,12 @@ body {
 
 @media only screen and (max-width: 800px) {
 	body, html {
-		min-height: -webkit-fill-available;
-		min-height: 100%;
+		width: 100%; height: 100%;
+		overflow:hidden;
 	}
 	.wrapper {
 		flex-direction: column-reverse;
-		height: 100vh;
-		min-height: -webkit-fill-available;
-		min-height: 100%;
+		height: 100%;
 	}
 	#middel {
 		position: initial;
