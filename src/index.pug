@@ -71,15 +71,14 @@ html(lang='en')
 						input(type="range", value=0 max=100 min=0 name="")#yellow.clr-in
 					.row
 						input(type="range", value=0 max=100 min=0 name="")#key.clr-in
-				canvas#canvas(width='100' height='100')
+				//- canvas#canvas(width='100' height='100')
 			#middel
 				nav
 					form#clr-search
 						input#searchfield(type="text" noaria-label="Search" autocomplete="off" placeholder="Color Search" name="color-search")
-				div
-					ul#output
-						li
-							span worker failed
+				ul#output
+					li
+						span worker failed
 					
 			
 		script(src='js/p5.min.js' type='text/javascript')
