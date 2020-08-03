@@ -6,7 +6,7 @@ html(lang='en')
 		link(rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css')
 		link(rel='stylesheet' href='main.css')
 		title#tittle RGB: color picker
-		meta(name="description" content='Color picker, and rgb,hsl, and hwb converter. 3d color space model with location of the selected color.')
+		meta(name="description" content='A tool to search for colors using color names,hex,rgb,hsx or cmyk.')
 		meta(name="keywords" content='RGB,HSL,HSV,HSB,Color Picker,Rgb cube, tool, sliders')
 		meta(name="author" content='Leon Nikolai Engelsvold')
 		link(rel="icon" sizes="any" type="data:image/svg+xml" href="favicon.ico")
@@ -21,7 +21,7 @@ html(lang='en')
 						input(type="radio", name="type" value="range" checked oninput='changeinput("clr-in",this.value)')
 						span Sliders
 					label.radio
-						input(type="radio", name="type" value="range" oninput='sitealert("This feature is currently not implemented")')
+						input(type="radio", name="type" value="range" disabled oninput='sitealert("This feature is currently not implemented")')
 						span Graphical
 				section.colorspace
 					div.colorswap
@@ -73,6 +73,7 @@ html(lang='en')
 						input(type="range", value=0 max=100 min=0 name="")#key.clr-in
 				//- canvas#canvas(width='100' height='100')
 			#middel
+				#notifications
 				nav
 					form#clr-search
 						input#searchfield(type="text" noaria-label="Search" autocomplete="off" placeholder="Color Search" name="color-search")

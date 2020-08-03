@@ -23,6 +23,17 @@ const rgb2all = (r,g,b) => {
 			:  max === g ? (b-r)/c+2
 			:              (r-g)/c+4;
 	hue += hue < 0 ? 6 : 0;
+
+	const D65 = [95.047, 100, 108.883]
+	let x =	.4124 * r + .3576 * g + .1805 * b,
+		y =	.2126 * r + .7152 * g + .0722 * b,
+		z =	.0193 * r + .1192 * g + .9505 * b;
+
+	[x, y, z] = [x, y, z].map((v, i) => {
+		v = v * 100 / D65[i]
+		return v > 0.008856 ? Math.pow(v, 1 / 3) : v * 7.787 + 16 / 116 
+	})
+
 	
 	return [
 		k*100, 			    //cmyk-key
@@ -35,7 +46,11 @@ const rgb2all = (r,g,b) => {
 		satV*100,			//hsv-saturation
 		max*100,			//hsv-value
 		min*100,			//hwb-whiteness
-		k*100				//hwb-blackness
+		k*100,				//hwb-blackness
+
+		116 * y - 16,		//lab-lightness
+		500 * (x - y),		//lab-A
+		200 * (y - z)		//lab-B2
 	]
 }
 
@@ -360,4 +375,21 @@ function rgb2lab(r,g,b){
 		500 * (x - y),
 		200 * (y - z)
 	]
+}
+
+function rgbToXyz(r,g,b) {
+	r/=255,g/=255,b/=255;
+	const D65 = [95.047, 100, 108.883]
+	let x =	.4124 * r + .3576 * g + .1805 * b,
+		y =	.2126 * r + .7152 * g + .0722 * b,
+		z =	.0193 * r + .1192 * g + .9505 * b;
+
+	[x, y, z] = [x, y, z].map((v, i) => {
+		v = v * 100 / D65[i]
+		return v > 0.008856 ? Math.pow(v, 1 / 3) : v * 7.787 + 16 / 116 
+	})
+	const l = 116 * y - 16
+	const a	= 500 * (x - y)
+	const b2 = 200 * (y - z)
+	return [l, a, b2]
 }

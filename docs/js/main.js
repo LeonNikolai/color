@@ -247,7 +247,7 @@ window.onload = (event) => {
     document.getElementById("tittle").innerHTML = "#" + rgb2hex(clr.red,clr.green,clr.blue);
 	domuppdate();
 	setColorr((clr.red>>0),(clr.green>>0),(clr.blue>>0))
-
+	document.getElementById("tittle").innerHTML = 'RGB.codes | Color Tools'
 }
 
 const inputUppdate = () => {
@@ -368,8 +368,11 @@ myWorker.onmessage = e => {
 			tags.className = "tags"
 			for (let index = 0; index < el[2].length; index++) {
 				const elm = el[2][index];
-				const g = document.createElement("span")
-				g.textContent = elm
+				const g = document.createElement("button")
+				g.textContent = elm;
+				g.setAttribute("c",`${elm}`)
+				g.addEventListener("click", getdataTag);
+				// g.addEventListener("click", () => out.value=);
 				tags.appendChild(g)
 			}
 			item.appendChild(tags)
@@ -399,12 +402,20 @@ myWorker.onmessage = e => {
 		out.appendChild(item); 
 	});
 
-	if(stat == 2) {myWorker.postMessage([stat2]); console.log(stat,stat2)}
+	if(stat == 2) {myWorker.postMessage([stat2]); console.log(stat,stat2); out.setAttribute("test","1")} else {out.setAttribute("test", "0")}
 	stat = 0;
 }
 const getdata = e => {
 	const r = e.target.getAttribute("c")
 	myWorker.postMessage([r])
 	sh.value = ""
+	sh.placeholder = r
+}
+const getdataTag = e => {
+	const r = e.target.getAttribute("c")
+	myWorker.postMessage([r])
+	sh.value = r + ":"
+	sh.focus();
+	// sh.setSelectionRange(-1);
 	sh.placeholder = r
 }
