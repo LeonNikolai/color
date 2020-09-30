@@ -8,26 +8,26 @@ const rgb2hue = (r,g,b,c,v) => {
 }
 // whiteness, hsv.val ,blackness & key, hsv.sat, hsl.sat, hsl.light, cyan, magenta, yellow
 
-const rgb2all = (r,g,b) => {
-	r/=255,g/=255,b/=255
+const rgb2all = (red,green,blue) => {
+	red/=255,green/=255,blue/=255
 	
-	const	min = Math.min(r,g,b)
-			max = Math.max(r,g,b)
-	const	c	= max-min,
-			k   = 1-max;
-	const	satL = c === 0 ? 0 : c / (1 - Math.abs(max+min-1)),
-			satV = c === 0 ? 0 : (c)/max;
+	const	min = Math.min(red,green,blue),
+			max = Math.max(red,green,blue)
+	const	chrome	= max-min,
+			key     = 1-max;
+	const	saturationHSL = chrome === 0 ? 0 : chrome / (1 - Math.abs(max+min-1)),
+			saturationHSV = chrome === 0 ? 0 : (chrome)/max;
 
-	let hue =    c === 0 ? 0
-		  	:  max === r ? ((g-b)/c)%6
-			:  max === g ? (b-r)/c+2
-			:              (r-g)/c+4;
+	let hue =  chrome === 0     ? 0
+		  	:  max    === red   ? ((green-blue)/chrome)%6
+			:  max    === green ? (blue-red)  /chrome+2
+			:                     (red-green)/chrome+4;
 	hue += hue < 0 ? 6 : 0;
 
 	const D65 = [95.047, 100, 108.883]
-	let x =	.4124 * r + .3576 * g + .1805 * b,
-		y =	.2126 * r + .7152 * g + .0722 * b,
-		z =	.0193 * r + .1192 * g + .9505 * b;
+	let x =	.4124 * red + .3576 * green + .1805 * blue,
+		y =	.2126 * red + .7152 * green + .0722 * blue,
+		z =	.0193 * red + .1192 * green + .9505 * blue;
 
 	[x, y, z] = [x, y, z].map((v, i) => {
 		v = v * 100 / D65[i]
@@ -36,22 +36,40 @@ const rgb2all = (r,g,b) => {
 
 	
 	return [
-		k*100, 			    //cmyk-key
-		(1-r-k)/(1-k)*100,  //cmyk-cyan
-		(1-g-k)/(1-k)*100,  //cmyk-magenta
-		(1-b-k)/(1-k)*100,  //cmyk-yellow
-		hue*60,			    //hsx-hue
-		satL*100,		    //hsl-saturation
-		(min+max)/2*100,    //hsl-lightness
-		satV*100,			//hsv-saturation
-		max*100,			//hsv-value
-		min*100,			//hwb-whiteness
-		k*100,				//hwb-blackness
+		key*100, 			    	//cmyk-key
+		(1-red-key)/(1-key)*100,  	//cmyk-cyan
+		(1-green-key)/(1-key)*100,  //cmyk-magenta
+		(1-blue-key)/(1-key)*100,  	//cmyk-yellow
+		hue*60,			    		//hsx-hue
+		saturationHSL*100,		    //hsl-saturation
+		(min+max)/2*100,    		//hsl-lightness
+		saturationHSV*100,			//hsv-saturation
+		max*100,					//hsv-value
+		min*100,					//hwb-whiteness
+		key*100,					//hwb-blackness
 
-		116 * y - 16,		//lab-lightness
-		500 * (x - y),		//lab-A
-		200 * (y - z)		//lab-B2
+		116 * y - 16,				//lab-lightness
+		500 * (x - y),				//lab-A
+		200 * (y - z)				//lab-B2
 	]
+}
+
+const rgb2hsl = (red,green,blue) => {
+	red/=255,green/=255,blue/=255
+	const min = Math.min(red,green,blue),
+		  max = Math.max(red,green,blue);
+	const chrome	= max-min
+	const lightness = (min+max)/2*100
+	if(chrome == 0) return [0,0,lightness];
+
+	const saturation = chrome / (1 - Math.abs(max+min-1)) * 100;
+	let hue = max    === red   ? ((green-blue)/chrome) %6
+			: max    === green ? (blue-red)   /chrome + 2
+			:                    (red-green)  /chrome + 4;
+	hue += hue < 0 ? 6 : 0;
+	hue *= 60;
+
+	return [hue,saturation,lightness]
 }
 
 const hsl2all = (h,s,l) => {
@@ -68,7 +86,7 @@ const hsl2all = (h,s,l) => {
 		hue2rgb(p, q, h - 1/3)*255, 							//blue
 		sv === 0 ? 0 : 2 * sv / (l + sv)*100, 					//hsv-saturation
 		(l+sv)*100,												//hsv-value
-		sv === 0 ? 0 : (1-(2 * sv / (l + sv))) * (l+sv)*100, 	//whiteness
+		sv === 0 ? 100-(1-(l+sv))*100 : (1-(2 * sv / (l + sv))) * (l+sv)*100, 	//whiteness
 		(1-(l+sv))*100											//blackness
 	]
 }
@@ -246,7 +264,7 @@ const rgb2hsx = (r,g,b) => {
 
 	dom.hue.value = clr.hue = hue*60;
 
-	dom.saturationHsl.value	    = clr.saturationHsl = satL*100;
+	dom.saturationHsl.value	    = clr.saturationHsl = satL * 100;
 	dom.lightness.value 		= clr.lightness		= (min+max)/2*100;
 	dom.saturationHsv.value	    = clr.saturationHsv = satV*100;
 	dom.value.value 			= clr.value 		= max*100;
@@ -266,13 +284,7 @@ const rgb2hsx = (r,g,b) => {
 
 const cmyk2rgb = (c, m, y, k) => [(1-((c/100)*(1-(k/=100))+k))*255,(1-((m/100)*(1-k)+ k))*255,(1-((y/100)*(1-k)+ k))*255]
 
-const rgb2hsl = (r,g,b) => {
-	r/=255,g/=255,b/=255
-	const w=Math.min(r,g,b),v=Math.max(r,g,b),c=v-w
-	s = c == 0 ? 0 : c / (1 - Math.abs(v+w-1))
-	l=(v+w)/2
-    return [rgb2hue(r,g,b,c,v)*60,s*100,l*100]
-}
+
 const rgb2cmyk = (r,g,b) => {
 	r/=255,g/=255,b/=255
 	k = 1-Math.max(r,g,b)
@@ -316,17 +328,43 @@ const hsv2rgb = (h, s, v) => {
 	let f= (n,k=(n+h/60)%6) => (v - v*(s/100)*Math.max(Math.min(k,4-k,1),0))*255;     
 	return [f(5),f(3),f(1)];    
 }
-
-const hwb2Rgb = (h, w, b) => {
-	h /= 360,w /= 100,b /= 100
-	let tot = w + b,l;
-	if (tot > 1) {
-	  w /= tot;
-	  b /= tot;
+function hwb2Rgb(h,wh,bl) {
+	h /= 360
+	wh /= 100
+	bl /= 100
+	const ratio = wh + bl;
+	let f;
+	if (ratio > 1) {
+		wh /= ratio;
+		bl /= ratio;
 	}
-	l=(1-w-b)
-	return [(hue2rgb(0, 1, h + 1.0/3.0)*l+w)*255,(hue2rgb(0, 1, h)*l+w)*255,(hue2rgb(0, 1, h - 1.0/3.0)*l+w)*255]
-}
+
+	const i = Math.floor(6 * h);
+	const v = 1 - bl;
+	f = 6 * h - i;
+
+	if ((i & 0x01) !== 0) {
+		f = 1 - f;
+	}
+
+	const n = wh + f * (v - wh);
+
+	let r,g,b;
+	
+	switch (i) {
+		default:
+		case 6:
+		case 0: r = v;  g = n;  b = wh; break;
+		case 1: r = n;  g = v;  b = wh; break;
+		case 2: r = wh; g = v;  b = n; break;
+		case 3: r = wh; g = n;  b = v; break;
+		case 4: r = n;  g = wh; b = v; break;
+		case 5: r = v;  g = wh; b = n; break;
+	}
+	return [r * 255, g * 255, b * 255];
+};
+
+
 
 function rgb2xyz(r, g, b) {
 	[ r, b, g ] = [ r, g, b ].map(

@@ -121,11 +121,38 @@ let dom = {
     set hwb(a)  {this.hue.value = a[0],this.whiteness.value = a[1], this.blackness.value = a[2]}
 }
 const domuppdate = () => {
+   
 	dom.rgb  = clr.rgb
     dom.hsl  = clr.hsl
     dom.hsv  = clr.hsv
     dom.hwb  = clr.hwb
     dom.cmyk = clr.cmyk
+    const hsvVal = hsv2rgb(clr.hue,clr.saturationHsv,100)
+    dom.value.style = `	
+    background: linear-gradient(to right, 
+        rgb(0,0,0),
+        rgb(${hsvVal[0]},${hsvVal[1]},${hsvVal[2]})
+    )`
+    const hsvSat = hsv2rgb(clr.hue,100,clr.value)
+    const hsvSat2 = hsv2rgb(clr.hue,0,clr.value)
+    dom.saturationHsv.style = `	
+    background: linear-gradient(to right, 
+        rgb(${hsvSat2[0]},${hsvSat2[1]},${hsvSat2[2]}),
+        rgb(${hsvSat[0]},${hsvSat[1]},${hsvSat[2]})
+    )`
+ 
+    dom.whiteness.style = `	
+    background: linear-gradient(to right, 
+        rgb(${hwb2Rgb(clr.hue, 0, clr.blackness).map(e=>e|0).join(",")}),
+        rgb(${hwb2Rgb(clr.hue, 100-clr.blackness, clr.blackness).map(e=>e|0).join(",")}) ${100-clr.blackness}%,
+        rgb(${hwb2Rgb(clr.hue, 100, clr.blackness).map(e=>e|0).join(",")})
+    )`
+    dom.blackness.style = `background: linear-gradient(to right, 
+        rgb(${hwb2Rgb(clr.hue, clr.whiteness, 0).map(e=>e|0).join(",")}),
+        rgb(${hwb2Rgb(clr.hue, clr.whiteness, clr.whiteness).map(e=>e|0).join(",")}) ${clr.whiteness}%,
+        rgb(${hwb2Rgb(clr.hue, clr.whiteness, 100).map(e=>e|0).join(",")}) 100%
+    );`
+    
     css_var("red",       clr.red)
     css_var("green",     clr.green)
     css_var("blue",      clr.blue)
@@ -137,13 +164,7 @@ const domuppdate = () => {
 	setcurrentswatch()
 }
 
-const setColorr = (r,g,b) => {
-	colorr = [r,g,b]
-	const string = `rgb(${r},${g},${b})`
-	sh.value = ""
-	sh.placeholder = string
-	myWorker.postMessage([string])
-}
+const setColorr = (r,g,b) => myWorker.postMessage([[r,g,b],"color"])
 let old = 0
 let swatch = [
     [Math.random() * 255,Math.random() * 255,Math.random() * 255],
@@ -158,12 +179,14 @@ let swatch = [
     [Math.random() * 255,Math.random() * 255,Math.random() * 255]
 ]
 const colorload = index => {
+   
     swatch[old] = clr.rgb
     old = index
     clr.rgb = swatch[index]
     domuppdate();
     inputUppdate();
     setColorr(clr.red,clr.green,clr.blue);
+
 }
 const RD = max =>  Math.floor(Math.random()*max)
 const sitealert = message => {
@@ -222,9 +245,9 @@ window.onload = (event) => {
     dom.blue.addEventListener            ("input", (e) => clr.rgb  = [clr.red, clr.green, e.target.value])
     dom.hue.addEventListener            ("input", (e) => clr.hsl  = [e.target.value, clr.saturationHsl , clr.lightness])
     dom.cyan.addEventListener            ("input", (e) => clr.cmyk = [e.target.value , clr.magenta, clr.yellow, clr.key])
-    dom.magenta.addEventListener        ("input", (e) => clr.cmyk = [clr.cyan, e.target.value, clr.yellow, clr.key])
-    dom.yellow.addEventListener            ("input", (e) => clr.cmyk = [clr.cyan, clr.magenta, e.target.value, clr.key])
-    dom.key.addEventListener            ("input", (e) => clr.cmyk = [clr.cyan, clr.magenta, clr.yellow, e.target.value])
+    dom.magenta.addEventListener           ("input", (e) => clr.cmyk = [clr.cyan, e.target.value, clr.yellow, clr.key])
+    dom.yellow.addEventListener           ("input", (e) => clr.cmyk = [clr.cyan, clr.magenta, e.target.value, clr.key])
+    dom.key.addEventListener              ("input", (e) => clr.cmyk = [clr.cyan, clr.magenta, clr.yellow, e.target.value])
     dom.saturationHsv.addEventListener    ("input", (e) => clr.hsv  = [clr.hue, e.target.value, clr.value])
     dom.value.addEventListener            ("input", (e) => clr.hsv  = [clr.hue, clr.saturationHsv, e.target.value])
     dom.saturationHsl.addEventListener    ("input", (e) => clr.hsl  = [clr.hue, e.target.value, clr.lightness])
@@ -233,7 +256,7 @@ window.onload = (event) => {
     dom.blackness.addEventListener        ("input", (e) => clr.hwb  = [clr.hue, clr.whiteness, e.target.value])
 
     for (let i of document.getElementsByClassName("clr-in")) {
-        i.addEventListener("input", ()=> requestAnimationFrame(()=>{domuppdate();setColorr((clr.red>>0),(clr.green>>0),(clr.blue>>0))}));
+        i.addEventListener("input", ()=> requestAnimationFrame(()=>{sh.value =''; sh.placeholder = `rgb(${[~~clr.red,~~clr.green,~~clr.blue].join(",")})`;domuppdate();setColorr((clr.red>>0),(clr.green>>0),(clr.blue>>0))}));
         i.addEventListener("change", inputUppdate);
     }
 
@@ -290,22 +313,29 @@ let stat2;
 let myWorker = new Worker('js/worker.js');
 const sh = document.getElementById('searchfield')
 const out = document.getElementById('output')
+
+
 sh.addEventListener('input', e => { 
 	let v = e.target.value || ''; 
 	let v_old = e.target.oldvalue || ''; 
-	e.target.value 	= v[0] == " " ? v.slice(1) 
-					: v == "rgb(" && v_old.slice(0,4) != "rgb(" ? "rgb()"
-					: v; 
-	if(e.target.value == "rgb()") {e.target.setSelectionRange(4,4);}
-	if(e.target.value == "rgb)")  {e.target.value= "rgb"}
-	if(v_old == "rgb()" && e.target.value == "rgb(")  {e.target.value= "rgb"}
-	if(v_old.slice(0,4) == "rgb(" && e.target.value.slice(-2,-1) == ")")  {e.target.value = "rgb(" + e.target.value.slice(4,-2) + ")"}
-
-	if(v_old.slice(0,4) == "rgb(" && v_old.slice(-1) == ")" && v.slice(0,3) == "rgb" &&v.slice(3,4) != "(")  {e.target.value = "rgb"}
-	
-	e.target.placeholder = "Search Colors"; 
-	if(stat == 0) {stat = 1; myWorker.postMessage([v]);} else {stat2 = v; stat=2;}
-	e.target.oldvalue = e.target.value; 
+    if(stat == 0 && v != v_old) {
+        e.target.value 	= v[0] == " " ? v.slice(1) 
+                        : v == "rgb(" && v_old.slice(0,4) != "rgb(" ? "rgb()"
+                        : v; 
+        if(e.target.value == "rgb()") {e.target.setSelectionRange(4,4);}
+        if(e.target.value == "rgb)")  {e.target.value= "rgb"}
+        if(v_old == "rgb()" && e.target.value == "rgb(")  {e.target.value= "rgb"}
+        if(v_old.slice(0,4) == "rgb(" && e.target.value.slice(-2,-1) == ")")  {e.target.value = "rgb(" + e.target.value.slice(4,-2) + ")"}
+    
+        if(v_old.slice(0,4) == "rgb(" && v_old.slice(-1) == ")" && v.slice(0,3) == "rgb" &&v.slice(3,4) != "(")  {e.target.value = "rgb"}
+        
+        e.target.placeholder = "Search Colors"; 
+        stat = 1; myWorker.postMessage([v]); inputUppdate();
+    
+    } 
+    else {stat2 = v; stat=2;}
+    e.target.oldvalue = e.target.value; 
+    
 })
 sh.addEventListener('focus', e => { 
 	if(e.target.value[0] == " ") {
@@ -402,7 +432,7 @@ myWorker.onmessage = e => {
 		out.appendChild(item); 
 	});
 
-	if(stat == 2) {myWorker.postMessage([stat2]); console.log(stat,stat2); out.setAttribute("test","1")} else {out.setAttribute("test", "0")}
+	if(stat == 2) {myWorker.postMessage([stat2]); console.error("to manny worker messages"); out.setAttribute("test","1")} else {out.setAttribute("test", "0")}
 	stat = 0;
 }
 const getdata = e => {
@@ -415,7 +445,7 @@ const getdataTag = e => {
 	const r = e.target.getAttribute("c")
 	myWorker.postMessage([r])
 	sh.value = r + ":"
-	sh.focus();
 	// sh.setSelectionRange(-1);
 	sh.placeholder = r
+	sh.focus();
 }

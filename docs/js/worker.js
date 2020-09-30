@@ -1,10 +1,27 @@
 onmessage = e => {
 	let i = e.data[0];
-	let setting = e.data[1];
-	let ofcourse = e.data[2];
+	let setting = e.data[1] || "message";
+
+	switch(setting) {
+		case "color" :
+			postMessage(rgbsort(i[0],i[1],i[2]));
+			break;
+		default:
+		case "message" :
+				postMessage(dothis(i).slice(0,16));
+			break;
+		case "details" :
+			
+			break;
+	}
+
+}
 
 
-	postMessage(dothis(i).slice(0,16));
+const rgbsort = (r,g,b) => {
+	let arr = search.slice();
+	const i = rgbToXyz(r,g,b);
+	return arr.sort((a,b) => distance(i, a[3]) - distance(i, b[3])).slice(0,16)
 }
 
 const RandomHex = (x = () => ('0' + (256*Math.random()>>0).toString(16)).slice(-2)) => x() + x() + x();
@@ -47,7 +64,7 @@ const dothis = i => {
 		arr = arr.sort((a,b) => distance(i, a[3]) - distance(i, b[3]) );
 		if(!(h.length == 3 || h.length == 6) || ( isNaN(s[0]) || isNaN(s[1]) || isNaN(s[2] ))){ 
 			let hex = RandomHex()
-			arr.unshift([`invalid hex code, try something like <button onclick='sh.value = "#${hex}"; sh.setSelectionRange(1,-1); sh.focus();'>#${hex}</button>`])
+			arr.unshift([`invalid hex code, try something like <button style="color:#${hex}" onclick='sh.value = "#${hex}"; sh.setSelectionRange(1,-1); sh.focus();'>#${hex}</button>`])
 		} else if(!(arr[0][1][0] == s[0] && arr[0][1][1] == s[1] && arr[0][1][2] == s[2])) { 
 			arr.unshift(["",s,[]])
 		};
@@ -66,7 +83,7 @@ const dothis = i => {
 		arr = arr.sort((a,b) => distance(i, a[3]) - distance(i, b[3]) )
 		if(s.length != 3) { 
 			const randomRGB = `${Math.random()*256 >>0},${Math.random()*256 >>0},${Math.random()*256>>0}`
-			arr.unshift([`invalid rgb code, try something like <button onclick='sh.value = "rgb(${randomRGB})"; sh.setSelectionRange(4,sh.value.length-1);sh.focus();'>rgb(${randomRGB})</button>`])
+			arr.unshift([`invalid rgb code, try something like <button style="color:rgb(${randomRGB}" onclick='sh.value = "rgb(${randomRGB})"; sh.setSelectionRange(4,sh.value.length-1);sh.focus();'>rgb(${randomRGB})</button>`])
 		} else if(!(arr[0][1][0] == s[0] && arr[0][1][1] == s[1] && arr[0][1][2] == s[2])) { 
 			arr.unshift(["",s])
 		};
@@ -4907,4 +4924,10 @@ const nbs = [
 	["Black\t", [34, 34, 34],["NBS"],[43.2612627717681, 0.002687447158089551, -0.005317259983894651]]
 ]
 
-const search = web.concat(pantone_coated).concat(pantone_uncoated).concat(nbs).concat(brands)
+const search = [ 
+	...web, 
+	...pantone_coated, 
+	...pantone_uncoated, 
+	...nbs, 
+	...brands
+]
