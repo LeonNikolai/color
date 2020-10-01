@@ -18,9 +18,9 @@ let clr = {
             this.whiteness,
             this.blackness
         ] = rgb2all(arr[0],arr[1],arr[2]);
-        this.red = arr[0];
+        this.red   = arr[0];
         this.green = arr[1];
-        this.blue = arr[2];
+        this.blue  = arr[2];
     },
     get cmyk() {return [this.cyan,this.magenta,this.yellow,this.key]},
     cyan             : 0,
@@ -120,6 +120,12 @@ let dom = {
     set hsv(a)  {this.hue.value = a[0],this.saturationHsv.value = a[1], this.value.value = a[2]},
     set hwb(a)  {this.hue.value = a[0],this.whiteness.value = a[1], this.blackness.value = a[2]}
 }
+
+function doBlack(r,g,b) {
+    const contrast = (r * 299 + g * 587 + b * 114) / 1000;
+    return contrast > 125 ? true : false;
+}
+
 const domuppdate = () => {
    
 	dom.rgb  = clr.rgb
@@ -128,40 +134,51 @@ const domuppdate = () => {
     dom.hwb  = clr.hwb
     dom.cmyk = clr.cmyk
     const hsvVal = hsv2rgb(clr.hue,clr.saturationHsv,100)
-    dom.value.style = `	
-    background: linear-gradient(to right, 
+    css_var("value", `
+    linear-gradient(to right, 
         rgb(0,0,0),
-        rgb(${hsvVal[0]},${hsvVal[1]},${hsvVal[2]})
-    )`
-    const hsvSat = hsv2rgb(clr.hue,100,clr.value)
-    const hsvSat2 = hsv2rgb(clr.hue,0,clr.value)
-    dom.saturationHsv.style = `	
-    background: linear-gradient(to right, 
-        rgb(${hsvSat2[0]},${hsvSat2[1]},${hsvSat2[2]}),
-        rgb(${hsvSat[0]},${hsvSat[1]},${hsvSat[2]})
-    )`
+        rgb(${hsv2rgb(clr.hue,clr.saturationHsv,100).join(",")})
+    )`)
+
+    css_var("saturation2", `	
+    linear-gradient(to right, 
+        rgb(${hsv2rgb(clr.hue,0,clr.value).join(",")}),
+        rgb(${hsv2rgb(clr.hue,100,clr.value).join(",")})
+    )`)
  
-    dom.whiteness.style = `	
-    background: linear-gradient(to right, 
-        rgb(${hwb2Rgb(clr.hue, 0, clr.blackness).map(e=>e|0).join(",")}),
-        rgb(${hwb2Rgb(clr.hue, 100-clr.blackness, clr.blackness).map(e=>e|0).join(",")}) ${100-clr.blackness}%,
-        rgb(${hwb2Rgb(clr.hue, 100, clr.blackness).map(e=>e|0).join(",")})
-    )`
-    dom.blackness.style = `background: linear-gradient(to right, 
-        rgb(${hwb2Rgb(clr.hue, clr.whiteness, 0).map(e=>e|0).join(",")}),
-        rgb(${hwb2Rgb(clr.hue, clr.whiteness, clr.whiteness).map(e=>e|0).join(",")}) ${clr.whiteness}%,
-        rgb(${hwb2Rgb(clr.hue, clr.whiteness, 100).map(e=>e|0).join(",")}) 100%
-    );`
-    
+    css_var("whiteness", `	
+    linear-gradient(to right, 
+        rgb(${hwb2Rgb(clr.hue, 0, clr.blackness).join(",")}),
+        rgb(${hwb2Rgb(clr.hue, 100-clr.blackness, clr.blackness).join(",")}) ${100-clr.blackness}%,
+        rgb(${hwb2Rgb(clr.hue, 100, clr.blackness).join(",")})
+    )`)
+    css_var("blackness", `linear-gradient(to right, 
+        rgb(${hwb2Rgb(clr.hue, clr.whiteness, 0).join(",")}),
+        rgb(${hwb2Rgb(clr.hue, clr.whiteness, 100-clr.whiteness).join(",")}) ${100-clr.whiteness}%,
+        rgb(${hwb2Rgb(clr.hue, clr.whiteness, 100).join(",")}) 100%
+    )`)
+
+    if(doBlack(clr.red,clr.green,clr.blue)) {
+        css_var("textColor", "var(--black)")
+    } else {
+        css_var("textColor", "var(--white)")
+    }
     css_var("red",       clr.red)
     css_var("green",     clr.green)
     css_var("blue",      clr.blue)
     css_var("hue",       clr.hue)    
     css_var("saturation",clr.saturationHsl)
     css_var("lightness", clr.lightness)
-    css_var("blackness", clr.blackness)
-    css_var("whiteness", clr.whiteness)
-	setcurrentswatch()
+    setcurrentswatch()
+    
+    document.getElementById("test").innerHTML = `
+#${rgb2hex(clr.red,clr.green,clr.blue)}<br>
+rgb( ${clr.rgb.map(e=>e|0).join(", ")} )<br>
+hsl( ${clr.hue|0}, ${clr.saturationHsl|0}%, ${clr.lightness|0}% )<br>
+hsv( ${clr.hue|0}, ${clr.saturationHsv|0}%, ${clr.value|0}% )<br>
+hwb( ${clr.hue|0}, ${clr.whiteness|0}%, ${clr.blackness|0}% )<br>
+cmyk : ${clr.cyan|0}% ${clr.magenta|0}% ${clr.yellow|0}% ${clr.key|0}%<br>
+`
 }
 
 const setColorr = (r,g,b) => myWorker.postMessage([[r,g,b],"color"])
@@ -353,7 +370,6 @@ sh.addEventListener('focus', e => {
 })
 sh.addEventListener('submit', e => { 
 	e.preventDefault();
-	console.log("form submitted");
 })
 
 document.getElementById("clr-search").addEventListener("submit", e => {
@@ -411,7 +427,7 @@ myWorker.onmessage = e => {
 		if (el[1]) {
 			const rgb = document.createElement("button")
 			rgb.className = "numbers"
-			rgb.setAttribute("c",`rgb(${el[1][0]},${el[1][1]},${el[1][2]})`)
+			rgb.setAttribute("c",`${el[1][0]},${el[1][1]},${el[1][2]}`)
 			rgb.addEventListener("click", getdata);
 			const r = document.createElement("span")
 			const g = document.createElement("span")
@@ -419,9 +435,9 @@ myWorker.onmessage = e => {
 			r.textContent = el[1][0]
 			g.textContent = el[1][1]
 			b.textContent = el[1][2]
-			r.setAttribute("c",`rgb(${el[1][0]},${el[1][1]},${el[1][2]})`)
-			g.setAttribute("c",`rgb(${el[1][0]},${el[1][1]},${el[1][2]})`)
-			b.setAttribute("c",`rgb(${el[1][0]},${el[1][1]},${el[1][2]})`)
+			r.setAttribute("c",`${el[1][0]},${el[1][1]},${el[1][2]}`)
+			g.setAttribute("c",`${el[1][0]},${el[1][1]},${el[1][2]}`)
+			b.setAttribute("c",`${el[1][0]},${el[1][1]},${el[1][2]}`)
 			rgb.appendChild(r)
 			rgb.appendChild(g)
 			rgb.appendChild(b)
@@ -436,10 +452,13 @@ myWorker.onmessage = e => {
 	stat = 0;
 }
 const getdata = e => {
-	const r = e.target.getAttribute("c")
-	myWorker.postMessage([r])
+    const r = e.target.getAttribute("c")
+    const t = r.split(",").map(e=>Number(e))
+	myWorker.postMessage([t,"color"])
 	sh.value = ""
-	sh.placeholder = r
+    sh.placeholder = "rgb(" + r + ")"
+    clr.rgb = t
+    domuppdate()
 }
 const getdataTag = e => {
 	const r = e.target.getAttribute("c")

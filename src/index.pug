@@ -5,6 +5,7 @@ html(lang='en')
 		meta(name='viewport' content='width=device-width, initial-scale=1.0')
 		link(rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css')
 		link(rel='stylesheet' href='main.css')
+		link(rel='stylesheet' href='https://fonts.googleapis.com/icon?family=Material+Icons')
 		title#tittle RGB: color picker
 		meta(name="description" content='A tool to search for colors using color names,hex,rgb,hsx or cmyk.')
 		meta(name="keywords" content='RGB,HSL,HSV,HSB,Color Picker,Rgb cube, tool, sliders')
@@ -42,7 +43,7 @@ html(lang='en')
 				section.colorspace.hue
 					span.descriptor hsx
 					.row.huepointer
-						input(type="range", step="any" value=0 max=360 min=0 name="" orient="vertical")#hue.clr-in
+						input(type="range", step="any" value=0 max=360 min=0 name="")#hue.clr-in
 					div.colorspace.hsl
 						span.descriptor hsl
 						.row
@@ -61,8 +62,9 @@ html(lang='en')
 							input(type="range", step="any" value=0 max=100 min=0 name="")#whiteness.clr-in
 						.row
 							input(type="range", step="any" value=0 max=100 min=0 name="")#blackness.clr-in
+				#test
 				section.colorspace.cmyk
-					span.descriptor cmyk
+					span.descriptor cmyk IN PROGRESS
 					.row
 						input(type="range", value=0 max=100 min=0 name="" )#cyan.clr-in
 					.row
@@ -71,15 +73,18 @@ html(lang='en')
 						input(type="range", value=0 max=100 min=0 name="")#yellow.clr-in
 					.row
 						input(type="range", value=0 max=100 min=0 name="")#key.clr-in
+					.row
+		
 				//- canvas#canvas(width='100' height='100')
 			#middel
 				#notifications
-				nav
-					form#clr-search
-						input#searchfield(type="text" noaria-label="Search" autocomplete="off" placeholder="Color Search" name="color-search")
+				form#clr-search
+					label(for="searchfield").material-icons.searchIcon 
+						span search
+					input#searchfield(type="text" noaria-label="Search" autocomplete="off" placeholder="Color Search" name="color-search")
 				ul#output
 					li
-						span worker failed
+						span worker stuck
 					
 			
 		//- script(src='js/p5.min.js' type='text/javascript')
