@@ -1,3 +1,6 @@
+import {html, render } from 'https://unpkg.com/lit-html?module'
+import {unsafeHTML} from 'https://unpkg.com/lit-html/directives/unsafe-html.js?module';
+
 let active =1
 let clr = {
     get rgb() {return [this.red,this.green,this.blue]},
@@ -88,7 +91,9 @@ let clr = {
         this.blackness = arr[2];
     },
 }
+
 let dom = {
+    message         : document.getElementById('message'),
     red             : document.getElementById("red"),
     green           : document.getElementById("green"),
     blue            : document.getElementById("blue"),
@@ -108,6 +113,7 @@ let dom = {
     magenta         : document.getElementById("magenta"),
     yellow          : document.getElementById("yellow"),
     key             : document.getElementById("key"),
+    colorswap       : document.getElementById("colorswap"),
 
     get rgb()   {return [ this.red, this.green,         this.blue        ]},
     get cmyk()  {return [ this.cyan,this.magenta,        this.yellow,    this.key ]},
@@ -128,6 +134,7 @@ function doBlack(r,g,b) {
 
 const domuppdate = () => {
    
+
 	dom.rgb  = clr.rgb
     dom.hsl  = clr.hsl
     dom.hsv  = clr.hsv
@@ -171,17 +178,22 @@ const domuppdate = () => {
     css_var("lightness", clr.lightness)
     setcurrentswatch()
     
-    document.getElementById("test").innerHTML = `
-#${rgb2hex(clr.red,clr.green,clr.blue)}<br>
-rgb( ${clr.rgb.map(e=>e|0).join(", ")} )<br>
-hsl( ${clr.hue|0}, ${clr.saturationHsl|0}%, ${clr.lightness|0}% )<br>
-hsv( ${clr.hue|0}, ${clr.saturationHsv|0}%, ${clr.value|0}% )<br>
-hwb( ${clr.hue|0}, ${clr.whiteness|0}%, ${clr.blackness|0}% )<br>
-cmyk : ${clr.cyan|0}% ${clr.magenta|0}% ${clr.yellow|0}% ${clr.key|0}%<br>
+    
+    let word = html`
+    <span class="bold">#${rgb2hex(clr.red,clr.green,clr.blue)}</span><br>
+    <div class="grid">
+        <div><span class="prefix">rgb</span> <span class="digit">${clr.red|0} ${clr.green|0} ${clr.blue|0}</span></div>
+        <div><span class="prefix">cmyk</span> <span class="digit">${((clr.cyan|0)+"%")} ${((clr.magenta|0)+"%")} ${((clr.yellow|0)+"%")} ${((clr.key|0)+"%")}</span></div>
+        <div><span class="prefix">hsl</span> <span class="digit">${((clr.hue|0)+"°")} ${((clr.saturationHsl|0)+"%")} ${((clr.lightness|0) + "%")}</span></div>
+        <div><span class="prefix">hsv</span> <span class="digit">${((clr.hue|0)+"°")} ${((clr.saturationHsv|0)+"%")} ${((clr.value|0) + "%")}</span></div>
+        <div><span class="prefix">hwb</span> <span class="digit">${((clr.hue|0)+"°")} ${((clr.whiteness|0)+"%")} ${((clr.blackness|0) + "%")}</span></div>
+    </div>
 `
+
+    render(word, document.getElementById("test"))
 }
 
-const setColorr = (r,g,b) => myWorker.postMessage([[r,g,b],"color"])
+const setColorr = (r,g,b,amount=16) => myWorker.postMessage([[r,g,b],"color",amount])
 let old = 0
 let swatch = [
     [Math.random() * 255,Math.random() * 255,Math.random() * 255],
@@ -220,7 +232,7 @@ const sitealert = message => {
     console.log(message)
 }
 
-const setURL = () => history.replaceState({ color: clr }, '', document.location.pathname + "?r=" + Number(clr.red).toFixed()+ "&g=" + Number(clr.green).toFixed() + "&b=" + Number(clr.blue).toFixed())
+const setURL = () => history.replaceState({ color: clr }, '', document.location.pathname + "?color=" + rgb2hex(clr.red,clr.green,clr.blue))
 const changeinput = (classname,type) => {
     x = document.getElementsByClassName(classname)
     for (i = 0; i < x.length; i++) x[i].type = type
@@ -230,39 +242,35 @@ const changeinput = (classname,type) => {
  
 function getparam (x) {
     let y = new URLSearchParams(document.location.search.substring(1)).get(x);
-    if(y == null){
-        return Math.random() * (255 - 0) + 0;
-    } else {
-        return Number(y);
-    }
+        return y
 };
 
 let inputstate = "rgb"
 
-window.onbeforeunload = () => window.sessionStorage.setItem('rgb', clr.rgb);
+
+
+window.onbeforeunload = () => window.sessionStorage.setItem('color', clr.rgb);
 window.onload = (event) => {
-    document.getElementById("color-1").style.background = "rgb(" + swatch[1][0] + "," + swatch[1][1] +"," + swatch[1][2] + ")"
-    document.getElementById("color-2").style.background = "rgb(" + swatch[2][0] + "," + swatch[2][1] +"," + swatch[2][2] + ")"
-    document.getElementById("color-3").style.background = "rgb(" + swatch[3][0] + "," + swatch[3][1] +"," + swatch[3][2] + ")"
-    document.getElementById("color-4").style.background = "rgb(" + swatch[4][0] + "," + swatch[4][1] +"," + swatch[4][2] + ")"
-    document.getElementById("color-5").style.background = "rgb(" + swatch[5][0] + "," + swatch[5][1] +"," + swatch[5][2] + ")"
+    document.getElementById("loading").remove()
+ 
     if (/Edge/.test(navigator.userAgent)) {
         alert('this website works better when using google chrome')
         sitealert('this website works better when using google chrome')
     }
 
     const url = new URLSearchParams(document.location.search)
-    clr.rgb = url.has('r') === true && url.has('g') === true && url.has('b') === true ? [Number(getparam("r")), Number(getparam("g")), Number(getparam("b"))]
-            : window.sessionStorage.rgb ? eval("["+window.sessionStorage.rgb+"]") 
-            : window.localStorage .rgb ? eval("["+window.localStorage.rgb+"]") 
-            : [Math.random() * 255,Math.random() * 255,Math.random() * 255];
 
-    dom.red.addEventListener            ("input", (e) => clr.rgb  = [e.target.value, clr.green, clr.blue])
+    clr.rgb = url.has('color')          ? hex2rgb(getparam("color"))
+            : window.sessionStorage.rgb && 1==0 ? eval("["+window.sessionStorage.rgb+"]") 
+            : window.localStorage.rgb   && 1==0 ? eval("["+window.localStorage.rgb+"]") 
+            : [Math.random() * 255|0,Math.random() * 255|0,Math.random() * 255|0];
+
+    dom.red.addEventListener              ("input", (e) => clr.rgb  = [e.target.value, clr.green, clr.blue])
     dom.green.addEventListener            ("input", (e) => clr.rgb  = [clr.red, e.target.value, clr.blue])
-    dom.blue.addEventListener            ("input", (e) => clr.rgb  = [clr.red, clr.green, e.target.value])
-    dom.hue.addEventListener            ("input", (e) => clr.hsl  = [e.target.value, clr.saturationHsl , clr.lightness])
-    dom.cyan.addEventListener            ("input", (e) => clr.cmyk = [e.target.value , clr.magenta, clr.yellow, clr.key])
-    dom.magenta.addEventListener           ("input", (e) => clr.cmyk = [clr.cyan, e.target.value, clr.yellow, clr.key])
+    dom.blue.addEventListener             ("input", (e) => clr.rgb  = [clr.red, clr.green, e.target.value])
+    dom.hue.addEventListener              ("input", (e) => clr.hsl  = [e.target.value, clr.saturationHsl , clr.lightness])
+    dom.cyan.addEventListener             ("input", (e) => clr.cmyk = [e.target.value , clr.magenta, clr.yellow, clr.key])
+    dom.magenta.addEventListener          ("input", (e) => clr.cmyk = [clr.cyan, e.target.value, clr.yellow, clr.key])
     dom.yellow.addEventListener           ("input", (e) => clr.cmyk = [clr.cyan, clr.magenta, e.target.value, clr.key])
     dom.key.addEventListener              ("input", (e) => clr.cmyk = [clr.cyan, clr.magenta, clr.yellow, e.target.value])
     dom.saturationHsv.addEventListener    ("input", (e) => clr.hsv  = [clr.hue, e.target.value, clr.value])
@@ -273,8 +281,8 @@ window.onload = (event) => {
     dom.blackness.addEventListener        ("input", (e) => clr.hwb  = [clr.hue, clr.whiteness, e.target.value])
 
     for (let i of document.getElementsByClassName("clr-in")) {
-        i.addEventListener("input", ()=> requestAnimationFrame(()=>{sh.value =''; sh.placeholder = `rgb(${[~~clr.red,~~clr.green,~~clr.blue].join(",")})`;domuppdate();setColorr((clr.red>>0),(clr.green>>0),(clr.blue>>0))}));
-        i.addEventListener("change", inputUppdate);
+        i.addEventListener("input", ()=> {sh.value =''; setColorr((clr.red>>0),(clr.green>>0),(clr.blue>>0)); sh.placeholder = `rgb(${[~~clr.red,~~clr.green,~~clr.blue].join(",")})`;domuppdate();});
+        i.addEventListener("change", ()=> {inputUppdate(); setColorr((clr.red>>0),(clr.green>>0),(clr.blue>>0))});
     }
 
     let favicon = document.createElement("link")
@@ -294,9 +302,8 @@ const inputUppdate = () => {
     document.getElementById("favicon").href = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 130 130'%3E%3Ccircle fill='rgb(" + clr.red + "," + clr.green + "," + clr.blue + ")' cx='64' cy='64' r='64'/%3E%3C/svg%3E"
     document.getElementById("tittle").innerHTML = "#" + rgb2hex(clr.red,clr.green,clr.blue);
     setURL();
-        
 }
-const css_var = (x,y) => document.documentElement.style.setProperty('--'+ String(x), String(y));
+const css_var = (x,y,z=document.documentElement) => z.style.setProperty('--'+ String(x), String(y));
 
 
 
@@ -328,8 +335,8 @@ const setcurrentswatch = () => {
 let stat = 0;
 let stat2;
 let myWorker = new Worker('js/worker.js');
-const sh = document.getElementById('searchfield')
-const out = document.getElementById('output')
+const sh = document.getElementById('searchfield');
+const out = document.getElementById('output');
 
 
 sh.addEventListener('input', e => { 
@@ -373,95 +380,70 @@ sh.addEventListener('submit', e => {
 })
 
 document.getElementById("clr-search").addEventListener("submit", e => {
-	e.preventDefault()
-    out.firstChild.lastChild.click()
+    e.preventDefault()
+    out.firstElementChild.lastElementChild.click()
 });
 
+const teee = 444;
+const getColor = e => console.log(event.currentTarget )
 
 myWorker.onmessage = e => {
-	out.innerHTML = ""
+    const data = e.data
+    const colors = data[0]
+    const more = colors <= 16 ? true : false;
+    const message = unsafeHTML(data[1])
+
+    render(message,dom.message)
+
 	const inn = sh.value.charAt(0).toUpperCase() +  sh.value.slice(1);
-	if(clr.rgb.map(e => e >>0) != e.data[0][1] && e.data[0][1] && stat == 1) {
-		clr.rgb = e.data[0][1];
+	if(clr.rgb.map(e => e >>0) != colors[0][1] && colors[0][1] && stat == 1) {
+		clr.rgb = colors[0][1];
 		domuppdate();
-	}
-	e.data.forEach(el => {
-		const item = document.createElement("li");
-		const preview = document.createElement("div")
-		if (el[1]) {
-			preview.setAttribute("style", `background-color: rgb(${el[1][0]},${el[1][1]},${el[1][2]})`); 
-		}
-		preview.className = "preview"
-		item.appendChild(preview)
-		
-		"".toLowerCase
-		const name = document.createElement("div"); 
+    }
+    const listrender = colors.map(el => {
+        const itemname = '<span>' + el[0] +'</span>';
+        const [r,g,b] = el[1] ? el[1] : [0,0,0];
+        const color = doBlack(r,g,b) ? "black;" : "white"
+        const tags = el[2] ?  el[2].map((tag) => html`<button @click=${getdataTag} c=${tag}>${tag}</button>`) : '';
+        const style = {
+            backgroundColor: `rgb(${r},${g},${b})`
+        }
+        return html`
+        <li>
+            <button @click=${getdata} c="${r},${g},${b}" class="colortest">
+                <div style="--textColor:var(--${color}); background:rgb(${r},${g},${b})" class="preview"></div>
+                <div class="name"><span>${unsafeHTML(el[0])}</span><span class="numbers"><span>${r}</span><span>${g}</span><span>${b}</span></span></div>
+            </button>
+            <div class="tags">${tags}</div>
+        </li>`
+    })
+    listrender.push(html`
+    <li>
+        <button class="colortest">
+            <div style="--textColor:var(--#fff); background:transparent;" class="preview"></div>
+            <div class="name">
+                <span>Load More</span>
+                <span>Load More</span>
+            </div>
+        </button>
+    </li>`)
+    render(listrender,out)
 
-		let inn2 = ""
-		for (var i = 0; i < Math.max(el[0].length,inn.length); i++) {
-			if(i < Math.min(el[0].length,inn.length)) {
-				inn2 = el[0][i] == inn[i] || el[0][i] == inn[i+1] || el[0][i] == inn[i-1] ? inn2 + `<b>${el[0][i]}</b>` : inn2 + el[0][i];
-			} else {
-				inn2 = inn2 + (el[0][i] || "")
-			}
-		}
-		name.innerHTML = inn2
-		name.className = "name"
-		item.appendChild(name)
 
-		if (el[2]) {
-			const tags = document.createElement("div")
-			tags.className = "tags"
-			for (let index = 0; index < el[2].length; index++) {
-				const elm = el[2][index];
-				const g = document.createElement("button")
-				g.textContent = elm;
-				g.setAttribute("c",`${elm}`)
-				g.addEventListener("click", getdataTag);
-				// g.addEventListener("click", () => out.value=);
-				tags.appendChild(g)
-			}
-			item.appendChild(tags)
-		}
-		
-		if (el[1]) {
-			const rgb = document.createElement("button")
-			rgb.className = "numbers"
-			rgb.setAttribute("c",`${el[1][0]},${el[1][1]},${el[1][2]}`)
-			rgb.addEventListener("click", getdata);
-			const r = document.createElement("span")
-			const g = document.createElement("span")
-			const b = document.createElement("span")
-			r.textContent = el[1][0]
-			g.textContent = el[1][1]
-			b.textContent = el[1][2]
-			r.setAttribute("c",`${el[1][0]},${el[1][1]},${el[1][2]}`)
-			g.setAttribute("c",`${el[1][0]},${el[1][1]},${el[1][2]}`)
-			b.setAttribute("c",`${el[1][0]},${el[1][1]},${el[1][2]}`)
-			rgb.appendChild(r)
-			rgb.appendChild(g)
-			rgb.appendChild(b)
-			item.appendChild(rgb)
-		}
-	
-
-		out.appendChild(item); 
-	});
-
-	if(stat == 2) {myWorker.postMessage([stat2]); console.error("to manny worker messages"); out.setAttribute("test","1")} else {out.setAttribute("test", "0")}
+	if(stat == 2) {myWorker.postMessage([stat2]); console.warn("to manny worker messages"); out.setAttribute("test","1")} else {out.setAttribute("test", "0")}
 	stat = 0;
 }
 const getdata = e => {
-    const r = e.target.getAttribute("c")
+    const r = e.currentTarget.getAttribute("c")
     const t = r.split(",").map(e=>Number(e))
 	myWorker.postMessage([t,"color"])
 	sh.value = ""
-    sh.placeholder = "rgb(" + r + ")"
+    sh.placeholder = "#" + rgb2hex(t[0],t[1],t[2]);
     clr.rgb = t
     domuppdate()
 }
 const getdataTag = e => {
-	const r = e.target.getAttribute("c")
+	const r = e.currentTarget.getAttribute("c")
 	myWorker.postMessage([r])
 	sh.value = r + ":"
 	// sh.setSelectionRange(-1);

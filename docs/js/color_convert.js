@@ -122,13 +122,18 @@ const hwb2all = (h, w, b) => {
 	  b /= tot;
 	}
 	l=(1-w-b)
+
+	let sat = (max-min)/max*100
+	let sat2 = (max-min)/(1-Math.abs(max+min-1))*100
+	if(sat < 0) sat = 0
+	if(sat2 < 0) sat2 = 0
 	return [
 		(hue2rgb(0, 1, h + 1.0/3.0)*l+w)*255, 	//red
 		(hue2rgb(0, 1, h)*l+w)*255, 			//green
 		(hue2rgb(0, 1, h - 1.0/3.0)*l+w)*255, 	//blue
-		(max-min)/max*100, 						//hsv-saturation
+		sat, 						//hsv-saturation
 		v*100, 									//hsv-value
-		(max-min)/(1-Math.abs(max+min-1))*100,	//hsl-saturation
+		sat2,	//hsl-saturation
 		(max+min)/2*100						//hsl-lightness
 	]
 }
@@ -246,7 +251,7 @@ const hsi2rgb = (h,s,i) => {
 // 	dom.blue.value = clr.blue =  (i * b * 765)
 // }
 
-
+const sh = document.getElementById('searchfield');
 const rgb2hsx = (r,g,b) => {
 	r/=255,g/=255,b/=255
 	const	min = r<g && r<b ? r : g<b ? g : b,
@@ -365,32 +370,68 @@ function hwb2Rgb(h,wh,bl) {
 };
 
 
-
-function rgb2xyz(r, g, b) {
-	[ r, b, g ] = [ r, g, b ].map(
-		v => v > 4.045 ? pow((v + 5.5) / 105.5, 2.4) * 100 : v / 12.92
-	);
-	const [ x, y, z ] = matrix([ lr, lb, lg ], [
-		[0.4124564, 0.3575761, 0.1804375],
-		[0.2126729, 0.7151522, 0.0721750],
-		[0.0193339, 0.1191920, 0.9503041]
-	]);
-	return [ x, y, z ];
+const D65 = [95.047, 100, 108.883]
+function rgb2xyz(r,g,b) {
+	r/=255,g/=255,b/=255;
+    let x =  0.4124 * r + 0.3576 * g + 0.1805 * b;
+    let y =  0.2126 * r + 0.7152 * g + 0.0722 * b;
+	let z =  0.0193 * r + 0.1192 * g + 0.9505 * b;
+	
+	[x, y, z] = [x,y,z].map(x => x * 100);
+	
+	[x, y, z] = [x, y, z].map((v, i) => {
+		v = v / D65[i]
+		return v > 0.008856 ? Math.pow(v, 1 / 3) : v * 7.787 + 16 / 116 
+	})
+	const l = 116 * y - 16
+	const a = 500 * (x - y)
+	const b2 = 200 * (y - z)
+	return [l, a, b2]
 }
 
-
+// const rgb2xyz = rgb => rgb.map(c=>((c/255)>0.04045) ? Math.pow((((c/255)+0.055)/1.055),2.4)*100 : (c/255)/12.92*100)
 
 const rgb2hex = (r,g,b) => ((1<<24)+(r<<16)+(g<<8)+Math.round(b)).toString(16).slice(1).toUpperCase();
-
+const hex2rgb = h => [(x=parseInt(h,16)) >> 16 & 255,x >> 8 & 255, x & 255];
 //input value 0-16777215
 //output values [red,green,blue] in the range 0-255
-let bit2rgb = (b) => [b>>>16&0xFF,b>>>8&0xFF,b&0xFF]
+let bit2rgb = b => [b>>>16&0xFF,b>>>8&0xFF,b&0xFF]
 
 //input value red,green and blue in the range 0-255
 //output value 0-16777215
 let rgb2bit = (r,g,b) => (r<<16)+(g<<8)+b
 
-
+Base64 = ( () => {
+    var digitsStr = 
+    //   0       8       16      24      32      40      48      56     63
+    //   v       v       v       v       v       v       v       v      v
+		"0123456789-ABCDE_GHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzF";
+    var digits = digitsStr.split('');
+    var digitsMap = {};
+    for (var i = 0; i < digits.length; i++) {
+        digitsMap[digits[i]] = i;
+    }
+    return {
+        fromInt: function(int32) {
+            var result = '';
+            while (true) {
+                result = digits[int32 & 0x3f] + result;
+                int32 >>>= 6;
+                if (int32 === 0)
+                    break;
+            }
+            return result;
+        },
+        toInt: function(digitsStr) {
+            var result = 0;
+            var digits = digitsStr.split('');
+            for (var i = 0; i < digits.length; i++) {
+                result = (result << 6) + digitsMap[digits[i]];
+            }
+            return result;
+        }
+    };
+})();
 function rgb2lab(r,g,b){
 	r/=255
 	g/=255
