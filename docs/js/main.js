@@ -1,6 +1,7 @@
 import {html, render } from 'https://unpkg.com/lit-html?module'
 import {unsafeHTML} from 'https://unpkg.com/lit-html/directives/unsafe-html.js?module';
 
+
 let active =1
 let clr = {
     get rgb() {return [this.red,this.green,this.blue]},
@@ -24,6 +25,7 @@ let clr = {
         this.red   = arr[0];
         this.green = arr[1];
         this.blue  = arr[2];
+        this.hex = rgb2hex(this.red,this.green,this.blue)
     },
     get cmyk() {return [this.cyan,this.magenta,this.yellow,this.key]},
     cyan             : 0,
@@ -248,11 +250,10 @@ function getparam (x) {
 let inputstate = "rgb"
 
 
-
 window.onbeforeunload = () => window.sessionStorage.setItem('color', clr.rgb);
 window.onload = (event) => {
-    document.getElementById("loading").remove()
- 
+    // document.getElementById("loading").remove()
+    
     if (/Edge/.test(navigator.userAgent)) {
         alert('this website works better when using google chrome')
         sitealert('this website works better when using google chrome')
@@ -261,6 +262,10 @@ window.onload = (event) => {
     const url = new URLSearchParams(document.location.search)
 
     clr.rgb = url.has('color')          ? hex2rgb(getparam("color"))
+            : window.sessionStorage.rgb && 1==0 ? eval("["+window.sessionStorage.rgb+"]") 
+            : window.localStorage.rgb   && 1==0 ? eval("["+window.localStorage.rgb+"]") 
+            : [Math.random() * 255|0,Math.random() * 255|0,Math.random() * 255|0];
+    clr.rgb = url.has('share')          ? hex2rgb(getparam("color"))
             : window.sessionStorage.rgb && 1==0 ? eval("["+window.sessionStorage.rgb+"]") 
             : window.localStorage.rgb   && 1==0 ? eval("["+window.localStorage.rgb+"]") 
             : [Math.random() * 255|0,Math.random() * 255|0,Math.random() * 255|0];
@@ -281,7 +286,7 @@ window.onload = (event) => {
     dom.blackness.addEventListener        ("input", (e) => clr.hwb  = [clr.hue, clr.whiteness, e.target.value])
 
     for (let i of document.getElementsByClassName("clr-in")) {
-        i.addEventListener("input", ()=> {sh.value =''; setColorr((clr.red>>0),(clr.green>>0),(clr.blue>>0)); sh.placeholder = `rgb(${[~~clr.red,~~clr.green,~~clr.blue].join(",")})`;domuppdate();});
+        i.addEventListener("input", ()=> {sh.value =''; setColorr((clr.red>>0),(clr.green>>0),(clr.blue>>0)); sh.placeholder = "#" + rgb2hex(clr.red,clr.green,clr.blue);  RenderColor = clr.rgb; ;domuppdate();});
         i.addEventListener("change", ()=> {inputUppdate(); setColorr((clr.red>>0),(clr.green>>0),(clr.blue>>0))});
     }
 
@@ -295,7 +300,9 @@ window.onload = (event) => {
     document.getElementById("tittle").innerHTML = "#" + rgb2hex(clr.red,clr.green,clr.blue);
 	domuppdate();
 	setColorr((clr.red>>0),(clr.green>>0),(clr.blue>>0))
-	document.getElementById("tittle").innerHTML = 'RGB.codes | Color Tools'
+    document.getElementById("tittle").innerHTML = 'RGB.codes | Color Tools'
+    setup()
+    draw(clr.red,clr.green,clr.blue)
 }
 
 const inputUppdate = () => {
@@ -385,7 +392,7 @@ document.getElementById("clr-search").addEventListener("submit", e => {
 });
 
 const teee = 444;
-const getColor = e => console.log(event.currentTarget )
+const getColor = e => console.log(e.currentTarget )
 
 myWorker.onmessage = e => {
     const data = e.data

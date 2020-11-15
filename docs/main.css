@@ -192,7 +192,7 @@ nav {
   padding-left: 1rem;
   padding-right: 1rem;
   padding-top: 1rem;
-  overflow: scroll;
+  overflow-y: scroll;
 }
 
 h1 {
@@ -445,6 +445,12 @@ input.clr-in:invalid {
   outline: blue 1px solid;
 }
 
+#viewrgb {
+  height: 100%;
+  width: 100%;
+  display: block;
+}
+
 body {
   margin: 0;
   padding: 0;
@@ -695,15 +701,9 @@ body {
 
   #middel {
     position: initial;
-    overflow: hidden;
-    flex: 0 1 auto;
     height: 100%;
     width: 100%;
-    padding: 0;
-    justify-content: flex-end;
-    flex-direction: column;
-    display: flex;
-    align-items: stretch;
+    padding: 0.5em;
   }
   #middel > nav {
     width: 100%;
@@ -713,8 +713,7 @@ body {
 
   #output {
     width: 100%;
-    height: 100%;
-    flex: 0 1 auto;
+    height: 10em;
     margin: 0;
     overflow-x: hidden;
     overflow-y: scroll;
@@ -735,8 +734,16 @@ body {
   }
 
   #test {
-    display: none;
+    padding: 0;
+    border-radius: 0;
     will-change: background, color;
+  }
+  #test .grid {
+    grid-template-columns: 1fr;
+  }
+
+  #colorswap {
+    display: none;
   }
 
   #sidebar-left {

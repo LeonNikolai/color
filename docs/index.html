@@ -13,7 +13,6 @@
     <link rel="icon" sizes="any" type="data:image/svg+xml" href="favicon.ico">
   </head>
   <body>
-    <div id="loading"><img src="loading.svg"></div>
     <div class="wrapper">
       <div id="sidebar-left">
         <section class="colorspace">
@@ -103,15 +102,17 @@
             <div class="dropdown"></div>
           </form>
           <div id="message">test</div>
-          <ul class="scrollbar-autohide" id="output"></ul>
+          <ul class="scrollbar-autohide" id="output"><img src="loading.svg"></ul>
         </div>
-        <h2>contrast checker</h2>
-        <div class="app"> 
-          <div class="preview">comming soon</div>
+        <h2>3d view</h2>
+        <div class="app">
+          <div id="viewrgb"></div>
         </div>
       </div>
     </div>
+    <script src="js/p5.min.js" type="text/javascript"></script>
     <script src="js/color_convert.js" type="text/javascript"></script>
+    <script src="js/test.js" type="text/javascript"></script>
     <script src="js/main.js" type="module"></script>
   </body>
 </html>
