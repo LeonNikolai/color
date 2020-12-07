@@ -300,7 +300,7 @@ window.onload = (event) => {
     document.getElementById("tittle").innerHTML = "#" + rgb2hex(clr.red,clr.green,clr.blue);
 	domuppdate();
 	setColorr((clr.red>>0),(clr.green>>0),(clr.blue>>0))
-    document.getElementById("tittle").innerHTML = 'RGB.codes | Color Tools'
+    document.getElementById("tittle").innerHTML = 'Color Tools'
     setup()
     draw(clr.red,clr.green,clr.blue)
 }
