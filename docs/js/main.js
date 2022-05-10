@@ -192,7 +192,7 @@ const domuppdate = () => {
     </div>
 `
 
-    render(word, document.getElementById("test"))
+    render(word, document.getElementById("test"));
 }
 
 const setColorr = (r,g,b,amount=16) => myWorker.postMessage([[r,g,b],"color",amount])
@@ -214,6 +214,7 @@ const colorload = index => {
     swatch[old] = clr.rgb
     old = index
     clr.rgb = swatch[index]
+
     domuppdate();
     inputUppdate();
     setColorr(clr.red,clr.green,clr.blue);
@@ -252,7 +253,7 @@ let inputstate = "rgb"
 
 window.onbeforeunload = () => window.sessionStorage.setItem('color', clr.rgb);
 window.onload = (event) => {
-    // document.getElementById("loading").remove()
+
     
     if (/Edge/.test(navigator.userAgent)) {
         alert('this website works better when using google chrome')
@@ -285,6 +286,7 @@ window.onload = (event) => {
     dom.whiteness.addEventListener        ("input", (e) => clr.hwb  = [clr.hue, e.target.value, clr.blackness])
     dom.blackness.addEventListener        ("input", (e) => clr.hwb  = [clr.hue, clr.whiteness, e.target.value])
 
+
     for (let i of document.getElementsByClassName("clr-in")) {
         i.addEventListener("input", ()=> {sh.value =''; setColorr((clr.red>>0),(clr.green>>0),(clr.blue>>0)); sh.placeholder = "#" + rgb2hex(clr.red,clr.green,clr.blue);  RenderColor = clr.rgb; ;domuppdate();});
         i.addEventListener("change", ()=> {inputUppdate(); setColorr((clr.red>>0),(clr.green>>0),(clr.blue>>0))});
@@ -298,6 +300,9 @@ window.onload = (event) => {
     favicon.href = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 130 130'%3E%3Ccircle fill='rgb(" + clr.red + "," + clr.green + "," + clr.blue + ")' cx='64' cy='64' r='64'/%3E%3C/svg%3E"
     document.getElementsByTagName('head')[0].appendChild(favicon)
     document.getElementById("tittle").innerHTML = "#" + rgb2hex(clr.red,clr.green,clr.blue);
+    document.getElementById("test").innerHTML = "";
+    document.getElementById("test").innerHTML = "";
+    out.innerHTML = "";
 	domuppdate();
 	setColorr((clr.red>>0),(clr.green>>0),(clr.blue>>0))
     document.getElementById("tittle").innerHTML = 'Color Tools'
