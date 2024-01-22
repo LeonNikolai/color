@@ -1,5 +1,5 @@
-import {html, render } from 'https://unpkg.com/lit-html?module'
-import {unsafeHTML} from 'https://unpkg.com/lit-html/directives/unsafe-html.js?module';
+import {html, render } from 'https://esm.run/lit-html@1?module'
+import {unsafeHTML} from 'https://esm.run/lit-html@1/directives/unsafe-html.js?module';
 
 
 let active =1
