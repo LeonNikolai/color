@@ -1,0 +1,27 @@
+{
+  "name": "color-picker",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "dev:wasm": "cd src-search-worker && wasm-pack build --target web",
+    "build": "tsc && vite build",
+    "build:wasm": "cd src-search-worker && wasm-pack build --target web",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "lit": "^3.3.0",
+    "lit-html": "^3.3.0",
+    "p5": "^2.0.3",
+    "wasm-pack": "^0.13.1"
+  },
+  "devDependencies": {
+    "@vituum/vite-plugin-pug": "^1.1.0",
+    "sass-embedded": "^1.89.1",
+    "typescript": "~5.8.3",
+    "vite": "^6.3.5",
+    "vituum": "^1.2.0"
+  },
+  "packageManager": "pnpm@9.12.1+sha1.7084e7df42ee1d221994c2c2599277a2a937f050"
+}

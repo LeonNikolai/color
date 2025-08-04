@@ -1,4 +1,5 @@
-const rgb2hue = (r,g,b,c,v) => {
+
+export const rgb2hue = (r,g,b,c,v) => {
     h  =  c == 0 ? 0
         : v==r ? ((g-b)/c)%6
         : v==g ? ( b-r)/c+2
@@ -8,7 +9,7 @@ const rgb2hue = (r,g,b,c,v) => {
 }
 // whiteness, hsv.val ,blackness & key, hsv.sat, hsl.sat, hsl.light, cyan, magenta, yellow
 
-const rgb2all = (red,green,blue) => {
+export const rgb2all = (red,green,blue) => {
 	red/=255,green/=255,blue/=255
 	
 	const	min = Math.min(red,green,blue),
@@ -54,7 +55,7 @@ const rgb2all = (red,green,blue) => {
 	]
 }
 
-const rgb2hsl = (red,green,blue) => {
+export const rgb2hsl = (red,green,blue) => {
 	red/=255,green/=255,blue/=255
 	const min = Math.min(red,green,blue),
 		  max = Math.max(red,green,blue);
@@ -72,7 +73,7 @@ const rgb2hsl = (red,green,blue) => {
 	return [hue,saturation,lightness]
 }
 
-const hsl2all = (h,s,l) => {
+export const hsl2all = (h,s,l) => {
 	h /= 360
 	s /= 100
 	l /= 100
@@ -91,7 +92,7 @@ const hsl2all = (h,s,l) => {
 	]
 }
 
-const hsv2all = (h,s,v) => {
+export const hsv2all = (h,s,v) => {
 	h /= 60
 	s /= 100
 	v /= 100
@@ -112,11 +113,12 @@ const hsv2all = (h,s,v) => {
 
 }
 
-const hwb2all = (h, w, b) => {
+export const hwb2all = (h, w, b) => {
 	h /= 360,w /= 100,b /= 100
 	let tot = w + b,l;
-	min = w
-	max = v = 1-b
+	const min = w
+	const max = 1-b
+	const v = max
 	if (tot > 1) {
 	  w /= tot;
 	  b /= tot;
@@ -138,12 +140,12 @@ const hwb2all = (h, w, b) => {
 	]
 }
 
-const cmyk2all = (c, m, y, k) => {
+export const cmyk2all = (c, m, y, k) => {
 	[dom.red.value, dom.green.value, dom.blue.value] = clr.rgb = cmyk2rgb(c,m,y,k);
 	rgb2hsx(clr.red,clr.green,clr.blue)
 }
 
-const hue2all = (h,s,l) => {
+export const hue2all = (h,s,l) => {
 	clr.hue = h
 	h /= 360
 	s /= 100
@@ -159,7 +161,7 @@ const hue2all = (h,s,l) => {
 	]
 } 
 
-const rgb2hue2 = (r,g,b)=> {
+export const rgb2hue2 = (r,g,b)=> {
 	r/=255,g/=255,b/=255
 	return Math.atan(
 		Math.sqrt(3*(g-b)) /
@@ -174,7 +176,7 @@ const rgb2hue2 = (r,g,b)=> {
 
 
 
-const hsi2rgb = (h,s,i) => {
+export const hsi2rgb = (h,s,i) => {
 	if (s<0 && i<0) {
 		s=i=0
 	}
@@ -251,8 +253,8 @@ const hsi2rgb = (h,s,i) => {
 // 	dom.blue.value = clr.blue =  (i * b * 765)
 // }
 
-const sh = document.getElementById('searchfield');
-const rgb2hsx = (r,g,b) => {
+export const sh = document.getElementById('searchfield');
+export const rgb2hsx = (r,g,b) => {
 	r/=255,g/=255,b/=255
 	const	min = r<g && r<b ? r : g<b ? g : b,
 			max = r>g && r>b ? r : g>b ? g : b;
@@ -287,10 +289,10 @@ const rgb2hsx = (r,g,b) => {
 	setcurrentswatch()
 }
 
-const cmyk2rgb = (c, m, y, k) => [(1-((c/100)*(1-(k/=100))+k))*255,(1-((m/100)*(1-k)+ k))*255,(1-((y/100)*(1-k)+ k))*255]
+export const cmyk2rgb = (c, m, y, k) => [(1-((c/100)*(1-(k/=100))+k))*255,(1-((m/100)*(1-k)+ k))*255,(1-((y/100)*(1-k)+ k))*255]
 
 
-const rgb2cmyk = (r,g,b) => {
+export const rgb2cmyk = (r,g,b) => {
 	r/=255,g/=255,b/=255
 	k = 1-Math.max(r,g,b)
 	return [
@@ -300,19 +302,19 @@ const rgb2cmyk = (r,g,b) => {
 		k*100
 	]
 }
-const rgb2hsv = (r,g,b) => {
+export const rgb2hsv = (r,g,b) => {
 	r/=255,g/=255,b/=255
 	const w=Math.min(r,g,b),v=Math.max(r,g,b),c=v-w
 	s = v==w ? 0 :(v-w)/v
     return [rgb2hue(r,g,b,c,v)*60,s*100,v*100]
 }
-const rgb2hwb = (r,g,b) => {
+export const rgb2hwb = (r,g,b) => {
 	r/=255,g/=255,b/=255
 	const w=Math.min(r,g,b),v=Math.max(r,g,b),c=v-w
     return [rgb2hue(r,g,b,c,v)*60,w*100,100-v*100]
 }
 
-const hue2rgb = (p, q, t) => { 
+export const hue2rgb = (p, q, t) => { 
 	if(t < 0.0) t += 1.0;
 	if(t > 1.0) t -= 1.0;
 	if(t < 1.0/6.0) return p + (q - p) * 6.0 * t;
@@ -320,7 +322,7 @@ const hue2rgb = (p, q, t) => {
 	if(t < 2.0/3.0) return p + (q - p) * (2.0/3.0 - t) * 6.0;
 					return p;
 	}
-const hslToRgb = (h, s, l) => {
+	export const hslToRgb = (h, s, l) => {
 	h /= 360
 	s /= 100
 	l /= 100
@@ -328,12 +330,12 @@ const hslToRgb = (h, s, l) => {
 	p = 2 * l - q;
 	return [hue2rgb(p, q, h + 1/3)*255,hue2rgb(p, q, h)*255,hue2rgb(p, q, h - 1/3)*255]
 }
-const hsv2rgb = (h, s, v) => {
+export const hsv2rgb = (h, s, v) => {
 	v/=100
 	let f= (n,k=(n+h/60)%6) => (v - v*(s/100)*Math.max(Math.min(k,4-k,1),0))*255;     
 	return [f(5),f(3),f(1)];    
 }
-function hwb2Rgb(h,wh,bl) {
+export function hwb2Rgb(h,wh,bl) {
 	h /= 360
 	wh /= 100
 	bl /= 100
@@ -370,8 +372,8 @@ function hwb2Rgb(h,wh,bl) {
 };
 
 
-const D65 = [95.047, 100, 108.883]
-function rgb2xyz(r,g,b) {
+export const D65 = [95.047, 100, 108.883]
+export function rgb2xyz(r,g,b) {
 	r/=255,g/=255,b/=255;
     let x =  0.4124 * r + 0.3576 * g + 0.1805 * b;
     let y =  0.2126 * r + 0.7152 * g + 0.0722 * b;
@@ -391,17 +393,20 @@ function rgb2xyz(r,g,b) {
 
 // const rgb2xyz = rgb => rgb.map(c=>((c/255)>0.04045) ? Math.pow((((c/255)+0.055)/1.055),2.4)*100 : (c/255)/12.92*100)
 
-const rgb2hex = (r,g,b) => ((1<<24)+(r<<16)+(g<<8)+Math.round(b)).toString(16).slice(1).toUpperCase();
-const hex2rgb = h => [(x=parseInt(h,16)) >> 16 & 255,x >> 8 & 255, x & 255];
+export const rgb2hex = (r,g,b) => ((1<<24)+(r<<16)+(g<<8)+Math.round(b)).toString(16).slice(1).toUpperCase();
+export const hex2rgb = h => {
+	const x=parseInt(h,16)
+	return [(x) >> 16 & 255,x >> 8 & 255, x & 255];
+}
 //input value 0-16777215
 //output values [red,green,blue] in the range 0-255
-let bit2rgb = b => [b>>>16&0xFF,b>>>8&0xFF,b&0xFF]
+export let bit2rgb = b => [b>>>16&0xFF,b>>>8&0xFF,b&0xFF]
 
 //input value red,green and blue in the range 0-255
 //output value 0-16777215
-let rgb2bit = (r,g,b) => (r<<16)+(g<<8)+b
+export let rgb2bit = (r,g,b) => (r<<16)+(g<<8)+b
 
-Base64 = ( () => {
+export const Base64 = ( () => {
     var digitsStr = 
     //   0       8       16      24      32      40      48      56     63
     //   v       v       v       v       v       v       v       v      v
@@ -432,7 +437,7 @@ Base64 = ( () => {
         }
     };
 })();
-function rgb2lab(r,g,b){
+export function rgb2lab(r,g,b){
 	r/=255
 	g/=255
 	b/=255
@@ -456,7 +461,7 @@ function rgb2lab(r,g,b){
 	]
 }
 
-function rgbToXyz(r,g,b) {
+export function rgbToXyz(r,g,b) {
 	r/=255,g/=255,b/=255;
 	const D65 = [95.047, 100, 108.883]
 	let x =	.4124 * r + .3576 * g + .1805 * b,
